@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572787017589.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "42299C12",
+    "lastKnownWriteTime" : 1572789354,
+    "last_content_update" : 1572789354827,
+    "path" : "C:/Users/Asus/Desktop/kmer/kmer/R/kmer.R",
+    "project_path" : "R/kmer.R",
+    "properties" : {
+        "cursorPosition" : "71,11",
+        "scrollLine" : "53"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

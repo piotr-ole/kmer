@@ -1,0 +1,44 @@
+[
+    {
+        "definitions" : [
+            {
+                "column" : 24,
+                "file" : "C:/Users/Asus/Desktop/kmer/kmer/src/fun.cpp",
+                "kind" : 6,
+                "line" : 16,
+                "name" : "map_up_to_k(std::string, unsigned int)",
+                "parent_name" : "",
+                "usr" : "c:@F@map_up_to_k#$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#i#"
+            },
+            {
+                "column" : 24,
+                "file" : "C:/Users/Asus/Desktop/kmer/kmer/src/fun.cpp",
+                "kind" : 6,
+                "line" : 30,
+                "name" : "map(std::string, unsigned int)",
+                "parent_name" : "",
+                "usr" : "c:@F@map#$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#i#"
+            },
+            {
+                "column" : 28,
+                "file" : "C:/Users/Asus/Desktop/kmer/kmer/src/fun.cpp",
+                "kind" : 6,
+                "line" : 41,
+                "name" : "reduce(std::list<std::string>)",
+                "parent_name" : "",
+                "usr" : "c:@F@reduce#$@N@std@C@list>#$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#$@N@std@C@allocator>#S1_#"
+            },
+            {
+                "column" : 28,
+                "file" : "C:/Users/Asus/Desktop/kmer/kmer/src/fun.cpp",
+                "kind" : 6,
+                "line" : 60,
+                "name" : "map_reduce(std::string, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@map_reduce#$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#I#"
+            }
+        ],
+        "file" : "C:/Users/Asus/Desktop/kmer/kmer/src/fun.cpp",
+        "file_last_write" : 1572789307
+    }
+]
