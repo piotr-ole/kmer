@@ -1,6 +1,0 @@
-library(testthat)
-
-test_that("Test mean", {
-  expect_equal(Rexamplepackage2::mean_list(list(c(1,2,1,4), c(2,3,5,10))), list(2, 5))
-  expect_equal(Rexamplepackage2::mean_list(list(c(2,2,2,2))), list(2))
-})
