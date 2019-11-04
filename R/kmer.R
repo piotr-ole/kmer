@@ -1,4 +1,7 @@
-#' @title Amino acid description dataframe
+#' @title Amino acids
+#' 
+#' @return A dataframe which contains basic information about all of amino acids. 
+#' Every amino acid is described by it's name, short name and letter code. 
 #'
 #' @export
 amino_acids <- function() {
@@ -18,30 +21,51 @@ amino_acids <- function() {
                         "L", "M", "F", "Y", "W"))
 }
 
-#' @title Amino acid letters
+#' @title Amino acids letters
+#' 
+#' @return A vector containing all of the valid amino acid letters
 #'
 #' @export
 amino_letters <- function() {
   as.character(amino_acids()[, "Letter"])
 }
 
-#' @title Generating random alphabet of given size
+#' @title Generate random alphabet
 #'
 #' @param nsize  \code{integer} number of elements in the alphabet 
+#' @return Random alphabet of given size created as a subset of valid amino acid letters.
 #'
+#' @examples
+#' generate_random_alphabet(10)
 #' @export
 generate_random_alphabet <- function(nsize = 10) {
   set <- amino_letters()
   set[sample(length(set), size = 10)]
 }
 
+#' @title Generate random sequence
+#'
+#' @param nsize  \code{integer} number of elements in the sequence
+#' @return Random \code{character} object of given length created from valid amino acid letters.
+#'
+#' @examples
+#' generate_random_seq(10)
+#' @export
 generate_random_seq <- function(nsize = 50) {
   set <- amino_letters()
   samp <- sample(set, nsize, replace = TRUE)
   paste(samp, collapse = '')
 }
 
-
+#'@title Count all mers
+#'
+#'@param string \code{character} with the sequence
+#'@return table with number of occurance of all mers in the sequence
+#'
+#'@export
+#'
+#'@examples
+#'count_mers("AAPGAGAYY")
 count_mers <- function(string) {
   l <- list()
   n <- nchar(string)
@@ -53,6 +77,15 @@ count_mers <- function(string) {
   table(unlist(l))
 }
 
+#'@title Count kmers
+#'
+#'@param string \code{character} with the sequence
+#'@param k \code{integer} defines length of the subsequence to be counted
+#'@return table with number of occurance of all k-mers in the sequence
+#'@export
+#'
+#'@examples
+#'count_k_mers("AAPGAGAYY", 2)
 count_k_mers <- function(string, k = 2) {
   l <- list()
   n <- nchar(string)
@@ -62,11 +95,11 @@ count_k_mers <- function(string, k = 2) {
   table(unlist(l))
 }
 
-#'@title Count kmers
+#'@title Count kmers compiled
 #'
 #'@param string \code{character} with the sequence
 #'@param k \code{integer} defines length of the subsequence to be counted
-#'
+#'@return table with number of occurance of all k-mers in the sequence
 #'@export
 #'
 #'@examples

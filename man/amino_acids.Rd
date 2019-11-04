@@ -2,10 +2,14 @@
 % Please edit documentation in R/kmer.R
 \name{amino_acids}
 \alias{amino_acids}
-\title{Amino acid description dataframe}
+\title{Amino acids}
 \usage{
 amino_acids()
 }
+\value{
+A dataframe which contains basic information about all of amino acids. 
+Every amino acid is described by it's name, short name and letter code.
+}
 \description{
-Amino acid description dataframe
+Amino acids
 }

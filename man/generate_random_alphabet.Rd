@@ -2,13 +2,19 @@
 % Please edit documentation in R/kmer.R
 \name{generate_random_alphabet}
 \alias{generate_random_alphabet}
-\title{Generating random alphabet of given size}
+\title{Generate random alphabet}
 \usage{
 generate_random_alphabet(nsize = 10)
 }
 \arguments{
 \item{nsize}{\code{integer} number of elements in the alphabet}
 }
+\value{
+Random alphabet of given size created as a subset of valid amino acid letters.
+}
 \description{
-Generating random alphabet of given size
+Generate random alphabet
+}
+\examples{
+generate_random_alphabet(10)
 }
