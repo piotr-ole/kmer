@@ -1,76 +1,111 @@
+// [[Rcpp::plugins("cpp11")]]
+
 #include <Rcpp.h>
-#include <algorithm>
-#include <numeric>
-#include <iostream>
-#include <cstdlib>
-#include <string>
-#include <map>
-#include <list>
-#include <utility>
-#include <exception>
+#include<string>
+#include<unordered_map>
+#include<vector>
 
-using namespace Rcpp;
+const int HASH_CONST = 101;
 
+const int MOD = 1e9 + 33;
 
-// [[Rcpp::export]]
-std::list<std::string> map_up_to_k(std::string sequence, unsigned int k)
-{
-  std::list<std::string> l = std::list<std::string>();
-  for (unsigned int len = 1; len <= k; len++) 
-  {
-    for (unsigned int i = 0; i <= sequence.size() - len; i++)
-    {
-      l.push_back(sequence.substr(i, len));
-    }
+int get_window_length(const Rcpp::IntegerVector& d) {
+  int res = 0;
+  for(const int& item: d) {
+    res += item + 1;
   }
-  return l;
+  return res;
 }
 
-// [[Rcpp::export]]
-std::list<std::string> map(std::string sequence, unsigned int k)
-{
-  std::list<std::string> l = std::list<std::string>();
-  for (unsigned int i = 0; i <= sequence.size() - k; i++)
-  {
-    l.push_back(sequence.substr(i, k));
+int get_hash(const std::string& s,
+             const Rcpp::IntegerVector& d,
+             int begin_index) {
+  long long lres = s[begin_index];
+  int current_letter_index = begin_index;
+  for(int i = 0; i < d.size(); ++i) {
+    current_letter_index += d[i] + 1;
+    lres = ((lres * HASH_CONST) + s[current_letter_index]) % MOD;
   }
-  return l;
+  return (int)lres;
 }
 
-// [[Rcpp::export]]
-std::map<std::string, int> reduce(std::list<std::string> l) {
-  std::map<std::string, int> mapa = std::map<std::string, int>();
-  std::list<std::string>::iterator it = l.begin();
-  for (it = l.begin() ; it != l.end(); it++)
-  {
-    try
-    {
-      mapa.at((*it))++;
+std::string create_kmer(const std::string& s,
+                        const Rcpp::IntegerVector& d,
+                        int begin_index) {
+  std::string res;
+  int kmer_length = d.size() + 1;
+  res.reserve(kmer_length);
+  res.append(1, s[begin_index]);
+  int current_letter_index = begin_index;
+  for(int d_i = 0; d_i < d.size(); ++d_i) {
+    current_letter_index += d[d_i] + 1;
+    res.append(1, s[current_letter_index]);
+  }
+  return res;
+}
+
+void update_kmers(std::unordered_map<int, std::pair<std::string, int>>& kmers,
+                  const Rcpp::IntegerVector& d,
+                  const std::string& s,
+                  int kmer_hash,
+                  int kmer_begin_index) {
+  auto map_elem = kmers.find(kmer_hash);
+  if(map_elem == kmers.end()) {
+    kmers[kmer_hash] = std::make_pair(create_kmer(s, d, kmer_begin_index), 0);
+  }
+  ++kmers[kmer_hash].second;
+}
+
+void update_kmers_with_alphabet(std::unordered_map<int, std::pair<std::string, int>>& kmers,
+                                const std::string& alphabet,
+                                std::vector<char>& currentKmer,
+                                int k) {
+  if(currentKmer.size() == k) {
+    long long hash = 0;
+    for(int i = 0; i < k; ++i) {
+      hash = (hash * HASH_CONST) + alphabet[i];
     }
-    catch (std::out_of_range& e)
-    {
-      mapa.insert(std::pair<std::string, int>((*it) , 1));
+    auto map_entry = kmers.find(hash);
+    if(map_entry == kmers.end()) {
+      kmers[hash] = std::make_pair(std::string(currentKmer.begin(), currentKmer.end()), 0);
     }
   }
-  return mapa;
+  
+  for(char letter: alphabet) {
+    currentKmer.push_back(letter);
+    update_kmers_with_alphabet(kmers, alphabet, currentKmer, k);
+    currentKmer.pop_back();
+  }
+}
+
+std::unordered_map<std::string, int> count_kmers(Rcpp::CharacterVector s,
+                                                 Rcpp::IntegerVector d,
+                                                 Rcpp::CharacterVector alphabet) {
+  // TODO: filter kmers that have chars not included in the alphabet
+  std::string str = Rcpp::as<std::string>(s);
+  std::unordered_map<int, std::pair<std::string, int>> kmers; // hash -> (kmer, count)
+  int window_length = get_window_length(d);
+  int last_window_index = s.size() - window_length;
+  for(int kmer_begin_index = 0; kmer_begin_index <= last_window_index; ++kmer_begin_index) {
+    update_kmers(kmers, d, str, get_hash(str, d, kmer_begin_index), kmer_begin_index);
+  }
+  
+  std::string str_alphabet = Rcpp::as<std::string>(alphabet);
+  std::vector<char> currentKmer;
+  update_kmers_with_alphabet(kmers,
+                             str_alphabet,
+                             currentKmer,
+                             (int)(d.size() + 1));
+  
+  std::unordered_map<std::string, int> res;
+  for(const auto& entry: kmers) {
+    res[entry.second.first] = entry.second.second;
+  }
+  return res;
 }
 
 
 // [[Rcpp::export]]
-std::map<std::string, int> map_reduce(std::string sequence, int k)
-  {
-  std::map<std::string, int> mapa = std::map<std::string, int>();
-  for (unsigned int i = 0; i <= sequence.size() - k; i++)
-  {
-    std::string s = sequence.substr(i, k);
-    try
-    {
-      mapa.at(s)++;
-    }
-    catch (std::out_of_range& e)
-    {
-      mapa.insert(std::pair<std::string, int>(s , 1));
-    }
-  }
-  return mapa;
-  }
+double fun() {
+  return 5;
+}

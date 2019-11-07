@@ -5,59 +5,19 @@
 
 using namespace Rcpp;
 
-// map_up_to_k
-std::list<std::string> map_up_to_k(std::string sequence, unsigned int k);
-RcppExport SEXP _kmer_map_up_to_k(SEXP sequenceSEXP, SEXP kSEXP) {
+// fun
+double fun();
+RcppExport SEXP _kmer_fun() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type sequence(sequenceSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(map_up_to_k(sequence, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// map
-std::list<std::string> map(std::string sequence, unsigned int k);
-RcppExport SEXP _kmer_map(SEXP sequenceSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type sequence(sequenceSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(map(sequence, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// reduce
-std::map<std::string, int> reduce(std::list<std::string> l);
-RcppExport SEXP _kmer_reduce(SEXP lSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::list<std::string> >::type l(lSEXP);
-    rcpp_result_gen = Rcpp::wrap(reduce(l));
-    return rcpp_result_gen;
-END_RCPP
-}
-// map_reduce
-std::map<std::string, int> map_reduce(std::string sequence, int k);
-RcppExport SEXP _kmer_map_reduce(SEXP sequenceSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type sequence(sequenceSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(map_reduce(sequence, k));
+    rcpp_result_gen = Rcpp::wrap(fun());
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_kmer_map_up_to_k", (DL_FUNC) &_kmer_map_up_to_k, 2},
-    {"_kmer_map", (DL_FUNC) &_kmer_map, 2},
-    {"_kmer_reduce", (DL_FUNC) &_kmer_reduce, 1},
-    {"_kmer_map_reduce", (DL_FUNC) &_kmer_map_reduce, 2},
+    {"_kmer_fun", (DL_FUNC) &_kmer_fun, 0},
     {NULL, NULL, 0}
 };
 
