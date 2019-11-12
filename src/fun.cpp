@@ -204,9 +204,9 @@ void fill_encoded_int_vector(std::vector<std::string> str_v,
 }
 
 // [[Rcpp::export]]
-void countt_kmers(Rcpp::StringVector s,
-                  Rcpp::IntegerVector d, 
-                  Rcpp::StringVector alphabet) {
+void countt_kmers(Rcpp::StringVector& s,
+                  Rcpp::IntegerVector& d, 
+                  Rcpp::StringVector& alphabet) {
   // create str -> int (and vice versa) coding maps in order to deal with numbers
   int lowest_not_used_num = 1;
   std::unordered_map<std::string, int> str2int;
