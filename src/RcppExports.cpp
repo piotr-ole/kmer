@@ -5,19 +5,21 @@
 
 using namespace Rcpp;
 
-// fun
-double fun();
-RcppExport SEXP _kmer_fun() {
+// countt_kmers
+void countt_kmers(Rcpp::CharacterVector s, Rcpp::IntegerVector d, Rcpp::CharacterVector alphabet);
+RcppExport SEXP _kmer_countt_kmers(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(fun());
-    return rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type s(sSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type d(dSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type alphabet(alphabetSEXP);
+    countt_kmers(s, d, alphabet);
+    return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_kmer_fun", (DL_FUNC) &_kmer_fun, 0},
+    {"_kmer_countt_kmers", (DL_FUNC) &_kmer_countt_kmers, 3},
     {NULL, NULL, 0}
 };
 

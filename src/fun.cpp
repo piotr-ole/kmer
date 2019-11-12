@@ -1,9 +1,10 @@
 // [[Rcpp::plugins("cpp11")]]
 
-#include <Rcpp.h>
+#include<Rcpp.h>
 #include<string>
 #include<unordered_map>
 #include<vector>
+#include<iostream>
 
 const int HASH_CONST = 101;
 
@@ -63,39 +64,61 @@ void update_kmers_with_alphabet(std::unordered_map<int, std::pair<std::string, i
   if(currentKmer.size() == k) {
     long long hash = 0;
     for(int i = 0; i < k; ++i) {
-      hash = (hash * HASH_CONST) + alphabet[i];
+      hash = ((hash * HASH_CONST) + currentKmer[i]) % MOD;
     }
-    auto map_entry = kmers.find(hash);
+    auto map_entry = kmers.find((int)hash);
     if(map_entry == kmers.end()) {
       kmers[hash] = std::make_pair(std::string(currentKmer.begin(), currentKmer.end()), 0);
     }
-  }
-  
-  for(char letter: alphabet) {
-    currentKmer.push_back(letter);
-    update_kmers_with_alphabet(kmers, alphabet, currentKmer, k);
-    currentKmer.pop_back();
+  } else {
+    for(char letter: alphabet) {
+      currentKmer.push_back(letter);
+      update_kmers_with_alphabet(kmers, alphabet, currentKmer, k);
+      currentKmer.pop_back();
+    }
   }
 }
 
-std::unordered_map<std::string, int> count_kmers(Rcpp::CharacterVector s,
-                                                 Rcpp::IntegerVector d,
-                                                 Rcpp::CharacterVector alphabet) {
-  // TODO: filter kmers that have chars not included in the alphabet
+bool is_kmer_allowed(const std::string& s,
+                     const Rcpp::IntegerVector& d,
+                     int begin_index,
+                     std::unordered_map<char, bool>& isCharAllowed) {
+  int current_index = begin_index;
+  int i = 0;
+  do {
+    if(!isCharAllowed[s[current_index]]) {
+      return false;
+    }
+    current_index += d[i] + 1;
+    ++i;
+  } while (i <= d.length());
+  return true;
+}
+
+std::unordered_map<std::string, int> __count_kmers(const Rcpp::CharacterVector& s,
+                                                   const Rcpp::IntegerVector& d,
+                                                   const Rcpp::CharacterVector& alphabet) {
   std::string str = Rcpp::as<std::string>(s);
-  std::unordered_map<int, std::pair<std::string, int>> kmers; // hash -> (kmer, count)
-  int window_length = get_window_length(d);
-  int last_window_index = s.size() - window_length;
-  for(int kmer_begin_index = 0; kmer_begin_index <= last_window_index; ++kmer_begin_index) {
-    update_kmers(kmers, d, str, get_hash(str, d, kmer_begin_index), kmer_begin_index);
+  std::string str_alphabet = Rcpp::as<std::string>(alphabet);
+  
+  std::unordered_map<char, bool> isCharAllowed;
+  for(const char& c: str_alphabet) {
+    isCharAllowed[c] = true;
   }
   
-  std::string str_alphabet = Rcpp::as<std::string>(alphabet);
+  std::unordered_map<int, std::pair<std::string, int>> kmers; // hash -> (kmer, count)
+  int window_length = get_window_length(d);
+  
+  int last_window_index = str.size() - window_length;
+  for(int kmer_begin_index = 0; kmer_begin_index <= last_window_index; ++kmer_begin_index) {
+    if(is_kmer_allowed(str, d, kmer_begin_index, isCharAllowed)) {
+      update_kmers(kmers, d, str, get_hash(str, d, kmer_begin_index), kmer_begin_index);
+    }
+  }
+  
   std::vector<char> currentKmer;
-  update_kmers_with_alphabet(kmers,
-                             str_alphabet,
-                             currentKmer,
-                             (int)(d.size() + 1));
+  currentKmer.clear();
+  update_kmers_with_alphabet(kmers, str_alphabet, currentKmer, (int)(d.size() + 1));
   
   std::unordered_map<std::string, int> res;
   for(const auto& entry: kmers) {
@@ -106,6 +129,13 @@ std::unordered_map<std::string, int> count_kmers(Rcpp::CharacterVector s,
 
 
 // [[Rcpp::export]]
-double fun() {
-  return 5;
+void countt_kmers(Rcpp::CharacterVector s,
+                  Rcpp::IntegerVector d, 
+                  Rcpp::CharacterVector alphabet) {
+  std::unordered_map<std::string, int> res = __count_kmers(s, d, alphabet);
+  for(const auto& p: res) {
+    std::cout << p.first << " " << p.second << std::endl;
+  }
 }
+
+
