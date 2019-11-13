@@ -3,6 +3,8 @@
 export(amino_acids)
 export(amino_letters)
 export(count_k_mers)
+export(count_kmer_num)
+export(count_kmers_str)
 export(count_mers)
 export(generate_random_alphabet)
 export(generate_random_seq)

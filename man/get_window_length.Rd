@@ -13,5 +13,6 @@ get_window_length(d)
 \code{integer} representing the total window length
 }
 \description{
-Get k-mer window length
+Compute a k-mer window length. The window length is the total size 
+used by the k-mer - the number of elements and the size of gaps.
 }
