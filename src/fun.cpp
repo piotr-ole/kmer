@@ -16,7 +16,6 @@ const int MOD = 1e9 + 33;
 
 // [[Rcpp::export]]
 int get_window_length(const Rcpp::IntegerVector& d) {
-  std::cout << d.length() << std::endl;
   int res = 1;
   for(const int& item: d) {
     res += item + 1;
@@ -24,6 +23,7 @@ int get_window_length(const Rcpp::IntegerVector& d) {
   return res;
 }
 
+// [[Rcpp::export]]
 int get_hash(const std::vector<int>& s,
              const Rcpp::IntegerVector& d,
              int begin_index,
