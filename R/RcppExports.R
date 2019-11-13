@@ -5,6 +5,7 @@
 #' 
 #' @param d  \code{integer} vector with distances between consequent elements
 #' @return \code{integer} representing the total window length
+#' @export
 get_window_length <- function(d) {
     .Call('_kmer_get_window_length', PACKAGE = 'kmer', d)
 }
@@ -17,6 +18,7 @@ get_window_length <- function(d) {
 #' @param pos  \code{logical} value representing whether k-mer is positional
 #' 
 #' @return \code{integer} value representing the result of a hashing function
+#' @export
 get_hash <- function(s, d, begin_index, pos) {
     .Call('_kmer_get_hash', PACKAGE = 'kmer', s, d, begin_index, pos)
 }
@@ -25,6 +27,7 @@ get_hash <- function(s, d, begin_index, pos) {
 #' 
 #' @param kmer  \code{integer} vector representing a word to be hashed
 #' @return \code{integer} value representing the result of a hashing function
+#' @export
 get_hash_for_word <- function(kmer) {
     .Call('_kmer_get_hash_for_word', PACKAGE = 'kmer', kmer)
 }

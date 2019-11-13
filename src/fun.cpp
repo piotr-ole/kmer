@@ -19,6 +19,7 @@ const int MOD = 1e9 + 33;
 //' 
 //' @param d  \code{integer} vector with distances between consequent elements
 //' @return \code{integer} representing the total window length
+//' @export
 // [[Rcpp::export]]
 int get_window_length(const Rcpp::IntegerVector& d) {
   int res = 1;
@@ -36,6 +37,7 @@ int get_window_length(const Rcpp::IntegerVector& d) {
 //' @param pos  \code{logical} value representing whether k-mer is positional
 //' 
 //' @return \code{integer} value representing the result of a hashing function
+//' @export
 // [[Rcpp::export]]
 int get_hash(const std::vector<int>& s,
              const Rcpp::IntegerVector& d,
@@ -54,6 +56,7 @@ int get_hash(const std::vector<int>& s,
 //' 
 //' @param kmer  \code{integer} vector representing a word to be hashed
 //' @return \code{integer} value representing the result of a hashing function
+//' @export
 // [[Rcpp::export]]
 int get_hash_for_word(const std::vector<int>& kmer) {
   long long hash = 0;
