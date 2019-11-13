@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// get_window_length
+int get_window_length(const Rcpp::IntegerVector& d);
+RcppExport SEXP _kmer_get_window_length(SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_window_length(d));
+    return rcpp_result_gen;
+END_RCPP
+}
 // countt_kmers_str
 std::unordered_map<std::string, int> countt_kmers_str(Rcpp::StringVector& s, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
 RcppExport SEXP _kmer_countt_kmers_str(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
@@ -35,6 +46,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_kmer_get_window_length", (DL_FUNC) &_kmer_get_window_length, 1},
     {"_kmer_countt_kmers_str", (DL_FUNC) &_kmer_countt_kmers_str, 4},
     {"_kmer_countt_kmers_num", (DL_FUNC) &_kmer_countt_kmers_num, 4},
     {NULL, NULL, 0}
