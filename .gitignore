@@ -7,4 +7,6 @@ src/*.so
 src/*.dll
 docs/
 .Rproj.user
-src/fun.o
+src/*.o
+src/*.dll
+.Rproj.user/*

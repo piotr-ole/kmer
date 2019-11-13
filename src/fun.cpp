@@ -13,15 +13,32 @@ typedef std::function<std::string(std::string&, int)> KMER_DECORATOR;
 const int HASH_CONST = 233;
 
 const int MOD = 1e9 + 33;
+  
 
+//' @title Get k-mer window length
+//' 
+//' @param d  \code{integer} vector with distances between consequent elements
+//' @return \code{integer} representing the total window length
+//' @export
+// [[Rcpp::export]]
 int get_window_length(const Rcpp::IntegerVector& d) {
-  int res = 0;
+  int res = 1;
   for(const int& item: d) {
     res += item + 1;
   }
   return res;
 }
 
+//' @title Get hash of k-mer that is in a given sequence
+//' 
+//' @param s  \code{integer} vector representing input sequence
+//' @param d  \code{integer} vector representing the gaps between consecutive elements of k-mer
+//' @param begin_index  \code{integer} value representing the begin index of the k-mer
+//' @param pos  \code{logical} value representing whether k-mer is positional
+//' 
+//' @return \code{integer} value representing the result of a hashing function
+//' @export
+// [[Rcpp::export]]
 int get_hash(const std::vector<int>& s,
              const Rcpp::IntegerVector& d,
              int begin_index,
@@ -35,13 +52,20 @@ int get_hash(const std::vector<int>& s,
   return (int)lres;
 }
 
-int get_hash(const std::vector<int>& kmer) {
+//' @title Get hash of a sequence
+//' 
+//' @param kmer  \code{integer} vector representing a word to be hashed
+//' @return \code{integer} value representing the result of a hashing function
+//' @export
+// [[Rcpp::export]]
+int get_hash_for_word(const std::vector<int>& kmer) {
   long long hash = 0;
   for(int i = 0; i < kmer.size(); ++i) {
     hash = ((hash * HASH_CONST) + kmer[i]) % MOD;
   }
   return (int)hash;
 }
+
 
 int get_total_size_of_kmer(const std::vector<int>& s,
                            const Rcpp::IntegerVector& d,
@@ -116,7 +140,7 @@ void add_kmer_if_not_exists(std::unordered_map<int, std::pair<std::string, int>>
                             std::vector<int> kmer,
                             std::unordered_map<int, std::string>& num2str,
                             KMER_DECORATOR kmer_decorator) {
-  int hash = get_hash(kmer);
+  int hash = get_hash_for_word(kmer);
   auto map_entry = kmers.find(hash);
   if(map_entry == kmers.end()) {
     kmers[hash] = std::make_pair(create_kmer(kmer, num2str, kmer_decorator), 0);
