@@ -21,7 +21,7 @@ const int MOD = 1e9 + 33;
 
 const std::string KMER_ITEM_SEPARATOR = ".";
   
-
+//' @name get_window_length
 //' @title Get k-mer window length
 //' 
 //' @description Compute a k-mer window length. The window length is the total size 
@@ -39,6 +39,7 @@ int get_window_length(const Rcpp::IntegerVector& d) {
   return res;
 }
 
+//' @name get_hash
 //' @title Get hash of k-mer that is in a given sequence
 //' 
 //' @param s  \code{integer} vector representing input sequence
@@ -62,6 +63,7 @@ int get_hash(const std::vector<int>& s,
   return (int)lres;
 }
 
+//' @name get_hash_for_word
 //' @title Get hash of a sequence
 //' 
 //' @param kmer  \code{integer} vector representing a word to be hashed
@@ -76,12 +78,13 @@ int get_hash_for_word(const std::vector<int>& kmer) {
   return (int)hash;
 }
 
+//' @name get_total_size_of_kmer
 //' @title Get the total size of k-mer
 //' 
 //' @description Computes the number of characters of the result k-mer
 //' taking into account the base alphabet. 
 //' 
-//' @param s  \code{integer} vector of encoded elements of a sequence (see \link{@details})
+//' @param s  \code{integer} vector of encoded elements of a sequence (see Details)
 //' @param d  \code{integer} vector which denotes the gaps in k-mer
 //' @param begin_index  \code{integer} representing the begin index (in \code{s}) of the k-mer
 //' @param num2str  a \code{hash map} representing the encoding between number and \code{string} representation of each alphabet's item
@@ -101,11 +104,12 @@ int get_total_size_of_kmer(const std::vector<int>& s,
   return res;
 }
 
+//' @name get_total_size_of_kmer
 //' @title Get the total size (number of characters) of a k-mer
 //' 
 //' @description The number of characters of the result k-mer (after decoding from \code{integer} to \code{string})
 //' 
-//' @param kmer  \code{integer} vector representing the encoded kmer (\link[kmer]{get_total_size_of_kmer})
+//' @param kmer  \code{integer} vector representing the encoded kmer (\link{get_total_size_of_kmer})
 //' @param num2str  \code{hash map} representing the encoding between the integer and string
 //' @return the number of characters in the result \code{string} that is the result of decoding each \code{integer} from \code{kmer}
 int get_total_size_of_kmer(const std::vector<int>& kmer,
@@ -117,6 +121,7 @@ int get_total_size_of_kmer(const std::vector<int>& kmer,
   return total_size - 1;
 }
 
+//' @name create_kmer
 //' @title Create k-mer
 //' 
 //' @description Creates k-mer (of type \code{string}) from encoded (\code{integer}) vector
@@ -146,6 +151,7 @@ std::string create_kmer(const std::vector<int>& s,
   return kmer_decorator(res, begin_index);
 }
 
+//' @name create_kmer
 //' @title Create k-mer
 //' 
 //' @description Creates k-mer (of type \code{string}) from encoded (\code{integer}) vector
@@ -172,9 +178,10 @@ std::string create_kmer(const std::vector<int>& kmer,
   return kmer_decorator(res, -1);
 }
 
+//' @name update_kmers
 //' @title Update k-mers in a \code{hash map}
 //' 
-//' @param kmers  a \code{hash map} reference representing the found k-mers (see \link{@details})
+//' @param kmers  a \code{hash map} reference representing the found k-mers (see details)
 //' @param d  \code{integer} vector representing gaps in k-mer
 //' @param s  \code{integer} vector representing an encoded sequence
 //' @param kmer_hash \code{integer} representing computed hash of k-mer
@@ -198,9 +205,10 @@ void update_kmers(std::unordered_map<int, std::pair<std::string, int>>& kmers,
   ++kmers[kmer_hash].second;
 }
 
+//' @name add_kmer_if_not_exists
 //' @title Add k-mer to a \code{hash map} if it does not exist
 //' 
-//' @param kmers  \code{hash map} containing k-mers (see \link[kmer]{update_kmers})
+//' @param kmers  \code{hash map} containing k-mers (see \link{update_kmers})
 //' @param kmer  encoded \code{integer} vector representing a k-mer
 //' @param num2str  \code{hash map} representing encoding between \code{integer} and \code{string}
 //' @param kmer_decorator  \code{function} that can add extra characters to the \code{string} representation of k-mer
@@ -215,11 +223,12 @@ void add_kmer_if_not_exists(std::unordered_map<int, std::pair<std::string, int>>
   }
 }
 
+//' @name update_kmers_with_alphabet
 //' @title Update k-mers with alphabet
 //' 
 //' @description Generates and add k-mers (based on the given alphabet) that do not exist in the \code{hash map}.
 //' 
-//' @param kmers  \code{hash map} reference that stores k-mers (see \link[kmer]{update_kmers})
+//' @param kmers  \code{hash map} reference that stores k-mers (see \link{update_kmers})
 //' @param alphabet  \code{integer} vector representing encoded alphabet
 //' @param currentKmer \code{integer} vector representing the part of currently generated k-mer
 //' @param k  \code{integer} representing the number of k-mer items
@@ -242,6 +251,7 @@ void update_kmers_with_alphabet(std::unordered_map<int, std::pair<std::string, i
   }
 }
 
+//' @name is_kmer_allowed
 //' @title Is k-mer allowed
 //' 
 //' @description Checks whether all elements of the given k-mer are contained in the alphabet set
@@ -266,6 +276,7 @@ bool is_kmer_allowed(const std::vector<int>& s,
   return true;
 }
 
+//' @name __count_kmers
 //' @title Count k-mers
 //' @description Counts the occurences of k-mers
 //' 
@@ -313,6 +324,7 @@ std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
   return res;
 }
 
+//' @name fill_items_coding_maps
 //' @title Prepare encoding and decoding \code{hash maps} for sequence items
 //' 
 //' @details Enumerates each sequence item in order to convert \code{non-integer} values to \code{integer} ones
@@ -339,6 +351,7 @@ void fill_items_coding_maps(B& elems,
   }
 }
 
+//' @name fill_encoded_int_vector
 //' @title Encode sequence vector (replace items to numbers)
 //' 
 //' @details \code{SEQ_TYPE} - the type of a sequence of the input sequence (rcpp)
@@ -356,7 +369,7 @@ void fill_encoded_int_vector(SEQ_TYPE str_v,
   }
 }
 
-
+//' @name get_kmers
 //' @title Get k-mers
 //' 
 //' @description Counts the occurences of k-mers
@@ -371,11 +384,11 @@ void fill_encoded_int_vector(SEQ_TYPE str_v,
 //' @return \code{hash map} containing string representations of k-mers with their occurrence countings 
 template <class B, class S>
 std::unordered_map<std::string, int> get_kmers(B& s,
-               Rcpp::IntegerVector& d,
-               B& alphabet,
-               std::function<std::string(S)> val2str_converter,
-               KMER_DECORATOR kmer_decorator,
-               bool pos) {
+                                               Rcpp::IntegerVector& d,
+                                               B& alphabet,
+                                               std::function<std::string(S)> val2str_converter,
+                                               KMER_DECORATOR kmer_decorator,
+                                               bool pos) {
   // create S -> int (and vice versa) coding maps in order to deal with numbers
   int lowest_not_used_num = 1;
   std::unordered_map<S, int> val2num;
@@ -404,6 +417,7 @@ bool is_first_true(Rcpp::LogicalVector& v) {
   return static_cast<bool>(v[0]);
 }
 
+//' @name count_kmers_str
 //' @title Count k-mers for string sequences
 //' 
 //' @param s  a \code{string} vector representing an input sequence
@@ -415,13 +429,17 @@ bool is_first_true(Rcpp::LogicalVector& v) {
 //' @details K-mers that contain elements from \code{alphabet} but do not exist in the input sequence are also generated.
 //' 
 //' @examples
-//' count_kmers_str(c("a", "b", "c", "d", "x", "y", "z", "z", "a", "a"), d=c(0,0), c("a", "b", "c", "z"), pos=FALSE)
+//' count_kmers_str(
+//' c("a", "b", "c", "d", "x", "y", "z", "z", "a", "a"),
+//' d=c(0,0),
+//' c("a", "b", "c", "z"),
+//' pos=FALSE)
 //' @export
 // [[Rcpp::export]]
 std::unordered_map<std::string, int> count_kmers_str(Rcpp::StringVector& s,
-                      Rcpp::IntegerVector& d, 
-                      Rcpp::StringVector& alphabet,
-                      Rcpp::LogicalVector& pos) {
+                                                     Rcpp::IntegerVector& d,
+                                                     Rcpp::StringVector& alphabet,
+                                                     Rcpp::LogicalVector& pos) {
   bool positional = is_first_true(pos);
   return get_kmers<Rcpp::StringVector, std::string>(s, d, alphabet,
                                              [](std::string s) { return s; },
@@ -429,6 +447,7 @@ std::unordered_map<std::string, int> count_kmers_str(Rcpp::StringVector& s,
                                              positional);
 }
 
+//' @name count_kmer_num
 //' @title Count k-mers for numeric sequences
 //' 
 //' @param s  a \code{numeric} vector representing an input sequence
@@ -440,13 +459,16 @@ std::unordered_map<std::string, int> count_kmers_str(Rcpp::StringVector& s,
 //' @details K-mers that contain elements from \code{alphabet} but do not exist in the input sequence are also generated.
 //' 
 //' @examples
-//' count_kmers_str(c(1,2,3,5,3,7), d=c(0,0), c(1, 2, 3, 4), pos=FALSE)
+//' count_kmers_str(c(1,2,3,5,3,7),
+//' d=c(0,0),
+//' c(1, 2, 3, 4),
+//' pos=FALSE)
 //' @export
 // [[Rcpp::export]]
 std::unordered_map<std::string, int> count_kmer_num(Rcpp::NumericVector& s,
-                      Rcpp::IntegerVector& d,
-                      Rcpp::NumericVector& alphabet,
-                      Rcpp::LogicalVector& pos) {
+                                                    Rcpp::IntegerVector& d,
+                                                    Rcpp::NumericVector& alphabet,
+                                                    Rcpp::LogicalVector& pos) {
   bool positional = is_first_true(pos);
   return get_kmers<Rcpp::NumericVector, double>(s, d, alphabet,
                                          [](double d) { return std::to_string(d); },

@@ -25,5 +25,8 @@ Count k-mers for numeric sequences
 K-mers that contain elements from \code{alphabet} but do not exist in the input sequence are also generated.
 }
 \examples{
-count_kmers_str(c(1,2,3,5,3,7), d=c(0,0), c(1, 2, 3, 4), pos=FALSE)
+count_kmers_str(c(1,2,3,5,3,7),
+d=c(0,0),
+c(1, 2, 3, 4),
+pos=FALSE)
 }
