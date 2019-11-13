@@ -8,6 +8,8 @@
 #include<algorithm>
 #include<functional>
 
+//typedef std::function<std::string(std::string&, int)> KMER_DECORATOR;
+
 const int HASH_CONST = 233;
 
 const int MOD = 1e9 + 33;
@@ -65,7 +67,8 @@ int get_total_size_of_kmer(const std::vector<int>& kmer,
 std::string create_kmer(const std::vector<int>& s,
                         const Rcpp::IntegerVector& d,
                         int begin_index,
-                        std::unordered_map<int, std::string>& num2str) {
+                        std::unordered_map<int, std::string>& num2str,
+                        std::function<std::string(std::string&, int)> kmer_decorator) {
   int total_kmer_size = get_total_size_of_kmer(s, d, begin_index, num2str);
   std::string res;
   res.reserve(total_kmer_size);
@@ -75,11 +78,12 @@ std::string create_kmer(const std::vector<int>& s,
     current_index += d[d_i] + 1;
     res += "." + num2str[s[current_index]];
   }
-  return res;
+  return kmer_decorator(res, begin_index);
 }
 
 std::string create_kmer(const std::vector<int>& kmer,
-                        std::unordered_map<int, std::string>& num2str) {
+                        std::unordered_map<int, std::string>& num2str,
+                        std::function<std::string(std::string&, int)> kmer_decorator) {
   int total_kmer_size = get_total_size_of_kmer(kmer, num2str);
   std::string res;
   res.reserve(total_kmer_size);
@@ -90,7 +94,7 @@ std::string create_kmer(const std::vector<int>& kmer,
       res += "."  + num2str[elem];
     }
   }
-  return res;
+  return kmer_decorator(res, -1);
 }
 
 void update_kmers(std::unordered_map<int, std::pair<std::string, int>>& kmers,
@@ -98,21 +102,23 @@ void update_kmers(std::unordered_map<int, std::pair<std::string, int>>& kmers,
                   const std::vector<int>& s,
                   int kmer_hash,
                   int kmer_begin_index,
-                  std::unordered_map<int, std::string>& num2str) {
+                  std::unordered_map<int, std::string>& num2str,
+                  std::function<std::string(std::string&, int)> kmer_decorator) {
   auto map_elem = kmers.find(kmer_hash);
   if(map_elem == kmers.end()) {
-    kmers[kmer_hash] = std::make_pair(create_kmer(s, d, kmer_begin_index, num2str), 0);
+    kmers[kmer_hash] = std::make_pair(create_kmer(s, d, kmer_begin_index, num2str, kmer_decorator), 0);
   }
   ++kmers[kmer_hash].second;
 }
 
 void add_kmer_if_not_exists(std::unordered_map<int, std::pair<std::string, int>>& kmers,
                             std::vector<int> kmer,
-                            std::unordered_map<int, std::string>& num2str) {
+                            std::unordered_map<int, std::string>& num2str,
+                            std::function<std::string(std::string&, int)> kmer_decorator) {
   int hash = get_hash(kmer);
   auto map_entry = kmers.find(hash);
   if(map_entry == kmers.end()) {
-    kmers[hash] = std::make_pair(create_kmer(kmer, num2str), 0);
+    kmers[hash] = std::make_pair(create_kmer(kmer, num2str, kmer_decorator), 0);
   }
 }
 
@@ -120,13 +126,14 @@ void update_kmers_with_alphabet(std::unordered_map<int, std::pair<std::string, i
                                 const std::vector<int>& alphabet,
                                 std::vector<int>& currentKmer,
                                 int k,
-                                std::unordered_map<int, std::string>& num2str) {
+                                std::unordered_map<int, std::string>& num2str,
+                                std::function<std::string(std::string&, int)> kmer_decorator) {
   if(currentKmer.size() == k) {
-    add_kmer_if_not_exists(kmers, currentKmer, num2str);
+    add_kmer_if_not_exists(kmers, currentKmer, num2str, kmer_decorator);
   } else {
     for(char letter: alphabet) {
       currentKmer.push_back(letter);
-      update_kmers_with_alphabet(kmers, alphabet, currentKmer, k, num2str);
+      update_kmers_with_alphabet(kmers, alphabet, currentKmer, k, num2str, kmer_decorator);
       currentKmer.pop_back();
     }
   }
@@ -151,7 +158,9 @@ bool is_kmer_allowed(const std::vector<int>& s,
 std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
                                                    const Rcpp::IntegerVector& d,
                                                    const std::vector<int>& alphabet,
-                                                   std::unordered_map<int, std::string> num2str) {
+                                                   std::unordered_map<int, std::string> num2str,
+                                                   std::function<std::string(std::string&, int)> kmer_decorator,
+                                                   bool pos) {
   std::unordered_map<int, bool> isItemAllowed;
   for(const int& c: alphabet) {
     isItemAllowed[c] = true;
@@ -164,15 +173,16 @@ std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
   int last_window_index = s.size() - window_length;
   for(int kmer_begin_index = 0; kmer_begin_index <= last_window_index; ++kmer_begin_index) {
     if(is_kmer_allowed(s, d, kmer_begin_index, isItemAllowed)) {
-      update_kmers(kmers, d, s, get_hash(s, d, kmer_begin_index), kmer_begin_index, num2str);
+      update_kmers(kmers, d, s, get_hash(s, d, kmer_begin_index), kmer_begin_index, num2str, kmer_decorator);
     }
   }
   
-  // fill map with kmers that can be created with the given alphabet
-  std::vector<int> currentKmer;
-  currentKmer.clear();
-  
-  update_kmers_with_alphabet(kmers, alphabet, currentKmer, (int)(d.size() + 1), num2str);
+  if(!pos) {
+    // fill map with kmers that can be created with the given alphabet
+    std::vector<int> currentKmer;
+    currentKmer.clear();
+    update_kmers_with_alphabet(kmers, alphabet, currentKmer, (int)(d.size() + 1), num2str, kmer_decorator);
+  }
   
   std::unordered_map<std::string, int> res;
   for(const auto& entry: kmers) {
@@ -210,7 +220,9 @@ template <class B, class S>
 void get_kmers(B& s,
                Rcpp::IntegerVector& d,
                B& alphabet,
-               std::function<std::string(S)> val2str_converter) {
+               std::function<std::string(S)> val2str_converter,
+               std::function<std::string(std::string&, int)> kmer_decorator,
+               bool pos) {
   // create S -> int (and vice versa) coding maps in order to deal with numbers
   int lowest_not_used_num = 1;
   std::unordered_map<S, int> val2num;
@@ -224,22 +236,42 @@ void get_kmers(B& s,
   std::vector<int> int_alphabet(alphabet.size());
   fill_encoded_int_vector<B, S>(alphabet, int_alphabet, val2num);
   
-  std::unordered_map<std::string, int> res = __count_kmers(int_s, d, int_alphabet, num2str);
+  std::unordered_map<std::string, int> res = __count_kmers(int_s, d, int_alphabet, num2str, kmer_decorator, pos);
   for(const auto& p: res) {
     std::cout << p.first << " " << p.second << std::endl;
   }
 }
 
-// [[Rcpp::export]]
-void countt_kmers(Rcpp::StringVector& s,
-                  Rcpp::IntegerVector& d, 
-                  Rcpp::StringVector& alphabet) {
-  get_kmers<Rcpp::StringVector, std::string>(s, d, alphabet, [](std::string s) { return s; });
+std::function<std::string(std::string&, int)> get_kmer_decorator(bool pos) {
+  return pos ?
+    [](std::string& s, int p) { return std::to_string(p) + "_" + s; } :
+    [](std::string& s, int p) { return s; };
+}
+
+bool is_first_true(Rcpp::LogicalVector& v) {
+  return static_cast<bool>(v[0]);
 }
 
 // [[Rcpp::export]]
-void count_kmers(Rcpp::NumericVector& s,
-                 Rcpp::IntegerVector& d,
-                 Rcpp::NumericVector& alphabet) {
-  get_kmers<Rcpp::NumericVector, double>(s, d, alphabet, [](double d) { return std::to_string(d); });
+void countt_kmers_str(Rcpp::StringVector& s,
+                      Rcpp::IntegerVector& d, 
+                      Rcpp::StringVector& alphabet,
+                      Rcpp::LogicalVector& pos) {
+  bool positional = is_first_true(pos);
+  get_kmers<Rcpp::StringVector, std::string>(s, d, alphabet,
+                                             [](std::string s) { return s; },
+                                             get_kmer_decorator(positional),
+                                             positional);
+}
+
+// [[Rcpp::export]]
+void countt_kmers_num(Rcpp::NumericVector& s,
+                      Rcpp::IntegerVector& d,
+                      Rcpp::NumericVector& alphabet,
+                      Rcpp::LogicalVector& pos) {
+  bool positional = is_first_true(pos);
+  get_kmers<Rcpp::NumericVector, double>(s, d, alphabet,
+                                         [](double d) { return std::to_string(d); },
+                                         get_kmer_decorator(positional),
+                                         positional);
 }

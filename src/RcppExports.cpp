@@ -5,34 +5,36 @@
 
 using namespace Rcpp;
 
-// countt_kmers
-void countt_kmers(Rcpp::StringVector& s, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet);
-RcppExport SEXP _kmer_countt_kmers(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP) {
+// countt_kmers_str
+void countt_kmers_str(Rcpp::StringVector& s, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
+RcppExport SEXP _kmer_countt_kmers_str(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::StringVector& >::type s(sSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type d(dSEXP);
     Rcpp::traits::input_parameter< Rcpp::StringVector& >::type alphabet(alphabetSEXP);
-    countt_kmers(s, d, alphabet);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector& >::type pos(posSEXP);
+    countt_kmers_str(s, d, alphabet, pos);
     return R_NilValue;
 END_RCPP
 }
-// count_kmers
-void count_kmers(Rcpp::NumericVector& s, Rcpp::IntegerVector& d, Rcpp::NumericVector& alphabet);
-RcppExport SEXP _kmer_count_kmers(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP) {
+// countt_kmers_num
+void countt_kmers_num(Rcpp::NumericVector& s, Rcpp::IntegerVector& d, Rcpp::NumericVector& alphabet, Rcpp::LogicalVector& pos);
+RcppExport SEXP _kmer_countt_kmers_num(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type s(sSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type d(dSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type alphabet(alphabetSEXP);
-    count_kmers(s, d, alphabet);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector& >::type pos(posSEXP);
+    countt_kmers_num(s, d, alphabet, pos);
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_kmer_countt_kmers", (DL_FUNC) &_kmer_countt_kmers, 3},
-    {"_kmer_count_kmers", (DL_FUNC) &_kmer_count_kmers, 3},
+    {"_kmer_countt_kmers_str", (DL_FUNC) &_kmer_countt_kmers_str, 4},
+    {"_kmer_countt_kmers_num", (DL_FUNC) &_kmer_countt_kmers_num, 4},
     {NULL, NULL, 0}
 };
 
