@@ -8,7 +8,7 @@
 #include<algorithm>
 #include<functional>
 
-//typedef std::function<std::string(std::string&, int)> KMER_DECORATOR;
+typedef std::function<std::string(std::string&, int)> KMER_DECORATOR;
 
 const int HASH_CONST = 233;
 
@@ -68,7 +68,7 @@ std::string create_kmer(const std::vector<int>& s,
                         const Rcpp::IntegerVector& d,
                         int begin_index,
                         std::unordered_map<int, std::string>& num2str,
-                        std::function<std::string(std::string&, int)> kmer_decorator) {
+                        KMER_DECORATOR kmer_decorator) {
   int total_kmer_size = get_total_size_of_kmer(s, d, begin_index, num2str);
   std::string res;
   res.reserve(total_kmer_size);
@@ -83,7 +83,7 @@ std::string create_kmer(const std::vector<int>& s,
 
 std::string create_kmer(const std::vector<int>& kmer,
                         std::unordered_map<int, std::string>& num2str,
-                        std::function<std::string(std::string&, int)> kmer_decorator) {
+                        KMER_DECORATOR kmer_decorator) {
   int total_kmer_size = get_total_size_of_kmer(kmer, num2str);
   std::string res;
   res.reserve(total_kmer_size);
@@ -103,7 +103,7 @@ void update_kmers(std::unordered_map<int, std::pair<std::string, int>>& kmers,
                   int kmer_hash,
                   int kmer_begin_index,
                   std::unordered_map<int, std::string>& num2str,
-                  std::function<std::string(std::string&, int)> kmer_decorator) {
+                  KMER_DECORATOR kmer_decorator) {
   auto map_elem = kmers.find(kmer_hash);
   if(map_elem == kmers.end()) {
     kmers[kmer_hash] = std::make_pair(create_kmer(s, d, kmer_begin_index, num2str, kmer_decorator), 0);
@@ -114,7 +114,7 @@ void update_kmers(std::unordered_map<int, std::pair<std::string, int>>& kmers,
 void add_kmer_if_not_exists(std::unordered_map<int, std::pair<std::string, int>>& kmers,
                             std::vector<int> kmer,
                             std::unordered_map<int, std::string>& num2str,
-                            std::function<std::string(std::string&, int)> kmer_decorator) {
+                            KMER_DECORATOR kmer_decorator) {
   int hash = get_hash(kmer);
   auto map_entry = kmers.find(hash);
   if(map_entry == kmers.end()) {
@@ -127,7 +127,7 @@ void update_kmers_with_alphabet(std::unordered_map<int, std::pair<std::string, i
                                 std::vector<int>& currentKmer,
                                 int k,
                                 std::unordered_map<int, std::string>& num2str,
-                                std::function<std::string(std::string&, int)> kmer_decorator) {
+                                KMER_DECORATOR kmer_decorator) {
   if(currentKmer.size() == k) {
     add_kmer_if_not_exists(kmers, currentKmer, num2str, kmer_decorator);
   } else {
@@ -159,7 +159,7 @@ std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
                                                    const Rcpp::IntegerVector& d,
                                                    const std::vector<int>& alphabet,
                                                    std::unordered_map<int, std::string> num2str,
-                                                   std::function<std::string(std::string&, int)> kmer_decorator,
+                                                   KMER_DECORATOR kmer_decorator,
                                                    bool pos) {
   std::unordered_map<int, bool> isItemAllowed;
   for(const int& c: alphabet) {
@@ -221,7 +221,7 @@ void get_kmers(B& s,
                Rcpp::IntegerVector& d,
                B& alphabet,
                std::function<std::string(S)> val2str_converter,
-               std::function<std::string(std::string&, int)> kmer_decorator,
+               KMER_DECORATOR kmer_decorator,
                bool pos) {
   // create S -> int (and vice versa) coding maps in order to deal with numbers
   int lowest_not_used_num = 1;
@@ -242,7 +242,7 @@ void get_kmers(B& s,
   }
 }
 
-std::function<std::string(std::string&, int)> get_kmer_decorator(bool pos) {
+KMER_DECORATOR get_kmer_decorator(bool pos) {
   return pos ?
     [](std::string& s, int p) { return std::to_string(p) + "_" + s; } :
     [](std::string& s, int p) { return s; };
