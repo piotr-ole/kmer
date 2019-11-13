@@ -94,18 +94,3 @@ count_k_mers <- function(string, k = 2) {
     }
   table(unlist(l))
 }
-
-#'@title Count kmers compiled
-#'
-#'@param string \code{character} with the sequence
-#'@param k \code{integer} defines length of the subsequence to be counted
-#'@return table with number of occurance of all k-mers in the sequence
-#'@export
-#'
-#'@examples
-#'count_k_mers_fast("AAPGAGAYY", 2)
-count_k_mers_fast <- function(string, k) {
-  reduce(map(string, k))
-}
-
-
