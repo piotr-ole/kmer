@@ -24,8 +24,9 @@ int get_window_length(const Rcpp::IntegerVector& d) {
 
 int get_hash(const std::vector<int>& s,
              const Rcpp::IntegerVector& d,
-             int begin_index) {
-  long long lres = s[begin_index];
+             int begin_index,
+             bool pos) {
+  long long lres = ((pos ? begin_index : 0) * HASH_CONST + s[begin_index]) % MOD;
   int current_letter_index = begin_index;
   for(int i = 0; i < d.size(); ++i) {
     current_letter_index += d[i] + 1;
@@ -173,7 +174,7 @@ std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
   int last_window_index = s.size() - window_length;
   for(int kmer_begin_index = 0; kmer_begin_index <= last_window_index; ++kmer_begin_index) {
     if(is_kmer_allowed(s, d, kmer_begin_index, isItemAllowed)) {
-      update_kmers(kmers, d, s, get_hash(s, d, kmer_begin_index), kmer_begin_index, num2str, kmer_decorator);
+      update_kmers(kmers, d, s, get_hash(s, d, kmer_begin_index, pos), kmer_begin_index, num2str, kmer_decorator);
     }
   }
   
