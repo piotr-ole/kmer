@@ -6,8 +6,9 @@
 #include<vector>
 #include<iostream>
 #include<algorithm>
+#include<functional>
 
-const int HASH_CONST = 101;
+const int HASH_CONST = 233;
 
 const int MOD = 1e9 + 33;
 
@@ -152,7 +153,7 @@ std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
                                                    const std::vector<int>& alphabet,
                                                    std::unordered_map<int, std::string> num2str) {
   std::unordered_map<int, bool> isItemAllowed;
-  for(const int& c: s) {
+  for(const int& c: alphabet) {
     isItemAllowed[c] = true;
   }
   
@@ -180,47 +181,48 @@ std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
   return res;
 }
 
-void fill_items_coding_maps(Rcpp::StringVector& elems,
-                            std::unordered_map<std::string, int>& str2int,
+template <class B, class S>
+void fill_items_coding_maps(B& elems,
+                            std::unordered_map<S, int>& val2num,
                             std::unordered_map<int, std::string>& num2str,
-                            int& lowest_not_used_num) {
+                            int& lowest_not_used_num,
+                            std::function<std::string(S)> val2str_converter) {
   for(int i = 0; i < elems.size(); ++i) {
-    std::string str_item = Rcpp::as<std::string>(elems[i]);
-    if(str2int.find(str_item) == str2int.end()) {
-      str2int[str_item] = lowest_not_used_num;
-      num2str[lowest_not_used_num] = str_item;
+    S s_item = (S)elems[i];
+    if(val2num.find(s_item) == val2num.end()) {
+      val2num[s_item] = lowest_not_used_num;
+      num2str[lowest_not_used_num] = val2str_converter(s_item);
       ++lowest_not_used_num;
     }
   }
 }
 
-void fill_encoded_int_vector(std::vector<std::string> str_v,
+template <class SEQ_TYPE, class ELEM_TYPE>
+void fill_encoded_int_vector(SEQ_TYPE str_v,
                              std::vector<int>& res,
-                             std::unordered_map<std::string, int>& str2int) {
-  int i = 0;
-  for(const std::string& elem: str_v) {
-    res[i++] = str2int[elem];
+                             std::unordered_map<ELEM_TYPE, int>& val2int) {
+  for(int i = 0; i < str_v.size(); ++i) {
+    res[i] = val2int[(ELEM_TYPE)str_v[i]];
   }
 }
 
-// [[Rcpp::export]]
-void countt_kmers(Rcpp::StringVector& s,
-                  Rcpp::IntegerVector& d, 
-                  Rcpp::StringVector& alphabet) {
-  // create str -> int (and vice versa) coding maps in order to deal with numbers
+template <class B, class S>
+void get_kmers(B& s,
+               Rcpp::IntegerVector& d,
+               B& alphabet,
+               std::function<std::string(S)> val2str_converter) {
+  // create S -> int (and vice versa) coding maps in order to deal with numbers
   int lowest_not_used_num = 1;
-  std::unordered_map<std::string, int> str2int;
+  std::unordered_map<S, int> val2num;
   std::unordered_map<int, std::string> num2str;
-  fill_items_coding_maps(s, str2int, num2str, lowest_not_used_num);
-  fill_items_coding_maps(alphabet, str2int, num2str, lowest_not_used_num);
+  fill_items_coding_maps(s, val2num, num2str, lowest_not_used_num, val2str_converter);
+  fill_items_coding_maps(alphabet, val2num, num2str, lowest_not_used_num, val2str_converter);
   
-  std::vector<std::string> v_s = Rcpp::as<std::vector<std::string>>(s);
-  std::vector<int> int_s(v_s.size());
-  fill_encoded_int_vector(v_s, int_s, str2int);
-
-  std::vector<std::string> v_alphabet = Rcpp::as<std::vector<std::string>>(alphabet);
-  std::vector<int> int_alphabet(v_alphabet.size());
-  fill_encoded_int_vector(v_alphabet, int_alphabet, str2int);
+  std::vector<int> int_s(s.size());
+  fill_encoded_int_vector<B, S>(s, int_s, val2num);
+  
+  std::vector<int> int_alphabet(alphabet.size());
+  fill_encoded_int_vector<B, S>(alphabet, int_alphabet, val2num);
   
   std::unordered_map<std::string, int> res = __count_kmers(int_s, d, int_alphabet, num2str);
   for(const auto& p: res) {
@@ -228,4 +230,17 @@ void countt_kmers(Rcpp::StringVector& s,
   }
 }
 
+// [[Rcpp::export]]
+void countt_kmers(Rcpp::StringVector& s,
+                  Rcpp::IntegerVector& d, 
+                  Rcpp::StringVector& alphabet) {
+  get_kmers<Rcpp::StringVector, std::string>(s, d, alphabet, [](std::string s) { return s; });
+}
 
+// [[Rcpp::export]]
+void count_kmers(Rcpp::NumericVector& s,
+                 Rcpp::IntegerVector& d,
+                 Rcpp::NumericVector& alphabet) {
+  double x = s[0];
+  get_kmers<Rcpp::NumericVector, double>(s, d, alphabet, [](double d) { return std::to_string(d); });
+}

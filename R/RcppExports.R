@@ -5,3 +5,7 @@ countt_kmers <- function(s, d, alphabet) {
     invisible(.Call('_kmer_countt_kmers', PACKAGE = 'kmer', s, d, alphabet))
 }
 
+count_kmers <- function(s, d, alphabet) {
+    invisible(.Call('_kmer_count_kmers', PACKAGE = 'kmer', s, d, alphabet))
+}
+

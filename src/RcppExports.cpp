@@ -17,9 +17,22 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// count_kmers
+void count_kmers(Rcpp::NumericVector& s, Rcpp::IntegerVector& d, Rcpp::NumericVector& alphabet);
+RcppExport SEXP _kmer_count_kmers(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type s(sSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type d(dSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type alphabet(alphabetSEXP);
+    count_kmers(s, d, alphabet);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kmer_countt_kmers", (DL_FUNC) &_kmer_countt_kmers, 3},
+    {"_kmer_count_kmers", (DL_FUNC) &_kmer_count_kmers, 3},
     {NULL, NULL, 0}
 };
 
