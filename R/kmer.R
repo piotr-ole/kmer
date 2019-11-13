@@ -60,7 +60,7 @@ generate_random_seq <- function(nsize = 50) {
 #'@title Count all mers
 #'
 #'@param string \code{character} with the sequence
-#'@return table with number of occurance of all mers in the sequence
+#'@return table with number of occurrence of all mers in the sequence
 #'
 #'@export
 #'
@@ -81,7 +81,7 @@ count_mers <- function(string) {
 #'
 #'@param string \code{character} with the sequence
 #'@param k \code{integer} defines length of the subsequence to be counted
-#'@return table with number of occurance of all k-mers in the sequence
+#'@return table with number of occurrence of all k-mers in the sequence
 #'@export
 #'
 #'@examples
