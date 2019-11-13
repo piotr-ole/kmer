@@ -188,7 +188,7 @@ void fill_items_coding_maps(B& elems,
                             int& lowest_not_used_num,
                             std::function<std::string(S)> val2str_converter) {
   for(int i = 0; i < elems.size(); ++i) {
-    S s_item = (S)elems[i];
+    S s_item = static_cast<S>(elems[i]);
     if(val2num.find(s_item) == val2num.end()) {
       val2num[s_item] = lowest_not_used_num;
       num2str[lowest_not_used_num] = val2str_converter(s_item);
@@ -202,7 +202,7 @@ void fill_encoded_int_vector(SEQ_TYPE str_v,
                              std::vector<int>& res,
                              std::unordered_map<ELEM_TYPE, int>& val2int) {
   for(int i = 0; i < str_v.size(); ++i) {
-    res[i] = val2int[(ELEM_TYPE)str_v[i]];
+    res[i] = val2int[static_cast<ELEM_TYPE>(str_v[i])];
   }
 }
 
@@ -241,6 +241,5 @@ void countt_kmers(Rcpp::StringVector& s,
 void count_kmers(Rcpp::NumericVector& s,
                  Rcpp::IntegerVector& d,
                  Rcpp::NumericVector& alphabet) {
-  double x = s[0];
   get_kmers<Rcpp::NumericVector, double>(s, d, alphabet, [](double d) { return std::to_string(d); });
 }
