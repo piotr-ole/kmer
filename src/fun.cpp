@@ -276,7 +276,7 @@ bool is_kmer_allowed(const std::vector<int>& s,
   return true;
 }
 
-//' @name __count_kmers
+//' @name count_kmers_helper
 //' @title Count k-mers
 //' @description Counts the occurences of k-mers
 //' 
@@ -288,7 +288,7 @@ bool is_kmer_allowed(const std::vector<int>& s,
 //' @param pos  \code{logical} value representing whether to count positional k-mers
 //' 
 //' @return \code{hash map} whose key is a \code{string} presentation of k-mer and value is the number of its occurences
-std::unordered_map<std::string, int> __count_kmers(const std::vector<int>& s,
+std::unordered_map<std::string, int> count_kmers_helper(const std::vector<int>& s,
                                                    const Rcpp::IntegerVector& d,
                                                    const std::vector<int>& alphabet,
                                                    std::unordered_map<int, std::string> num2str,
@@ -402,7 +402,7 @@ std::unordered_map<std::string, int> get_kmers(B& s,
   std::vector<int> int_alphabet(alphabet.size());
   fill_encoded_int_vector<B, S>(alphabet, int_alphabet, val2num);
   
-  return __count_kmers(int_s, d, int_alphabet, num2str, kmer_decorator, pos);
+  return count_kmers_helper(int_s, d, int_alphabet, num2str, kmer_decorator, pos);
 }
 
 // a helper function used for determining how to decorate k-mer

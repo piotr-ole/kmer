@@ -102,7 +102,7 @@ NULL
 #' @return \code{logical} value denoting whether k-mer is valid (contains valid characters that are in the alphabet)
 NULL
 
-#' @name __count_kmers
+#' @name count_kmers_helper
 #' @title Count k-mers
 #' @description Counts the occurences of k-mers
 #' 
