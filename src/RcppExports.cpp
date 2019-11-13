@@ -16,6 +16,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_hash
+int get_hash(const std::vector<int>& s, const Rcpp::IntegerVector& d, int begin_index, bool pos);
+RcppExport SEXP _kmer_get_hash(SEXP sSEXP, SEXP dSEXP, SEXP begin_indexSEXP, SEXP posSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type d(dSEXP);
+    Rcpp::traits::input_parameter< int >::type begin_index(begin_indexSEXP);
+    Rcpp::traits::input_parameter< bool >::type pos(posSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_hash(s, d, begin_index, pos));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_hash_for_word
+int get_hash_for_word(const std::vector<int>& kmer);
+RcppExport SEXP _kmer_get_hash_for_word(SEXP kmerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type kmer(kmerSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_hash_for_word(kmer));
+    return rcpp_result_gen;
+END_RCPP
+}
 // countt_kmers_str
 std::unordered_map<std::string, int> countt_kmers_str(Rcpp::StringVector& s, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
 RcppExport SEXP _kmer_countt_kmers_str(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
@@ -47,6 +72,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kmer_get_window_length", (DL_FUNC) &_kmer_get_window_length, 1},
+    {"_kmer_get_hash", (DL_FUNC) &_kmer_get_hash, 4},
+    {"_kmer_get_hash_for_word", (DL_FUNC) &_kmer_get_hash_for_word, 1},
     {"_kmer_countt_kmers_str", (DL_FUNC) &_kmer_countt_kmers_str, 4},
     {"_kmer_countt_kmers_num", (DL_FUNC) &_kmer_countt_kmers_num, 4},
     {NULL, NULL, 0}
