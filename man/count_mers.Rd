@@ -10,7 +10,7 @@ count_mers(string)
 \item{string}{\code{character} with the sequence}
 }
 \value{
-table with number of occurance of all mers in the sequence
+table with number of occurrence of all mers in the sequence
 }
 \description{
 Count all mers

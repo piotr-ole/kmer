@@ -12,7 +12,7 @@ count_k_mers(string, k = 2)
 \item{k}{\code{integer} defines length of the subsequence to be counted}
 }
 \value{
-table with number of occurance of all k-mers in the sequence
+table with number of occurrence of all k-mers in the sequence
 }
 \description{
 Count kmers

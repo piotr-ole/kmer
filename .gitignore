@@ -10,3 +10,4 @@ docs/
 src/*.o
 src/*.dll
 .Rproj.user/*
+inst/doc
