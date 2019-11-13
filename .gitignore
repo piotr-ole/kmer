@@ -8,6 +8,5 @@ src/*.dll
 docs/
 .Rproj.user
 src/*.o
-src/RcppExports*
 src/*.dll
 .Rproj.user/*
