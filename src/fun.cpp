@@ -218,7 +218,7 @@ void fill_encoded_int_vector(SEQ_TYPE str_v,
 }
 
 template <class B, class S>
-void get_kmers(B& s,
+std::unordered_map<std::string, int> get_kmers(B& s,
                Rcpp::IntegerVector& d,
                B& alphabet,
                std::function<std::string(S)> val2str_converter,
@@ -237,10 +237,7 @@ void get_kmers(B& s,
   std::vector<int> int_alphabet(alphabet.size());
   fill_encoded_int_vector<B, S>(alphabet, int_alphabet, val2num);
   
-  std::unordered_map<std::string, int> res = __count_kmers(int_s, d, int_alphabet, num2str, kmer_decorator, pos);
-  for(const auto& p: res) {
-    std::cout << p.first << " " << p.second << std::endl;
-  }
+  return __count_kmers(int_s, d, int_alphabet, num2str, kmer_decorator, pos);
 }
 
 KMER_DECORATOR get_kmer_decorator(bool pos) {
@@ -254,24 +251,24 @@ bool is_first_true(Rcpp::LogicalVector& v) {
 }
 
 // [[Rcpp::export]]
-void countt_kmers_str(Rcpp::StringVector& s,
+std::unordered_map<std::string, int> countt_kmers_str(Rcpp::StringVector& s,
                       Rcpp::IntegerVector& d, 
                       Rcpp::StringVector& alphabet,
                       Rcpp::LogicalVector& pos) {
   bool positional = is_first_true(pos);
-  get_kmers<Rcpp::StringVector, std::string>(s, d, alphabet,
+  return get_kmers<Rcpp::StringVector, std::string>(s, d, alphabet,
                                              [](std::string s) { return s; },
                                              get_kmer_decorator(positional),
                                              positional);
 }
 
 // [[Rcpp::export]]
-void countt_kmers_num(Rcpp::NumericVector& s,
+std::unordered_map<std::string, int> countt_kmers_num(Rcpp::NumericVector& s,
                       Rcpp::IntegerVector& d,
                       Rcpp::NumericVector& alphabet,
                       Rcpp::LogicalVector& pos) {
   bool positional = is_first_true(pos);
-  get_kmers<Rcpp::NumericVector, double>(s, d, alphabet,
+  return get_kmers<Rcpp::NumericVector, double>(s, d, alphabet,
                                          [](double d) { return std::to_string(d); },
                                          get_kmer_decorator(positional),
                                          positional);

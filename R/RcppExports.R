@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 countt_kmers_str <- function(s, d, alphabet, pos) {
-    invisible(.Call('_kmer_countt_kmers_str', PACKAGE = 'kmer', s, d, alphabet, pos))
+    .Call('_kmer_countt_kmers_str', PACKAGE = 'kmer', s, d, alphabet, pos)
 }
 
 countt_kmers_num <- function(s, d, alphabet, pos) {
-    invisible(.Call('_kmer_countt_kmers_num', PACKAGE = 'kmer', s, d, alphabet, pos))
+    .Call('_kmer_countt_kmers_num', PACKAGE = 'kmer', s, d, alphabet, pos)
 }
 

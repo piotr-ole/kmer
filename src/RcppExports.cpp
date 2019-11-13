@@ -6,29 +6,31 @@
 using namespace Rcpp;
 
 // countt_kmers_str
-void countt_kmers_str(Rcpp::StringVector& s, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
+std::unordered_map<std::string, int> countt_kmers_str(Rcpp::StringVector& s, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
 RcppExport SEXP _kmer_countt_kmers_str(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::StringVector& >::type s(sSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type d(dSEXP);
     Rcpp::traits::input_parameter< Rcpp::StringVector& >::type alphabet(alphabetSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector& >::type pos(posSEXP);
-    countt_kmers_str(s, d, alphabet, pos);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(countt_kmers_str(s, d, alphabet, pos));
+    return rcpp_result_gen;
 END_RCPP
 }
 // countt_kmers_num
-void countt_kmers_num(Rcpp::NumericVector& s, Rcpp::IntegerVector& d, Rcpp::NumericVector& alphabet, Rcpp::LogicalVector& pos);
+std::unordered_map<std::string, int> countt_kmers_num(Rcpp::NumericVector& s, Rcpp::IntegerVector& d, Rcpp::NumericVector& alphabet, Rcpp::LogicalVector& pos);
 RcppExport SEXP _kmer_countt_kmers_num(SEXP sSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type s(sSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type d(dSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type alphabet(alphabetSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector& >::type pos(posSEXP);
-    countt_kmers_num(s, d, alphabet, pos);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(countt_kmers_num(s, d, alphabet, pos));
+    return rcpp_result_gen;
 END_RCPP
 }
 
