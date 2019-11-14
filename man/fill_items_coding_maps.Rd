@@ -20,5 +20,5 @@ Prepare encoding and decoding \code{hash maps} for sequence items
 \details{
 Enumerates each sequence item in order to convert \code{non-integer} values to \code{integer} ones
 \code{B} is the template Rcpp input type
-\code{S} is the template cpp input type of one element
+\code{S} is the template c++ input type of one element
 }

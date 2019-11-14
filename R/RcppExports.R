@@ -66,7 +66,7 @@ NULL
 #' @param kmer_decorator  \code{function} that can add extra characters to \code{string} k-mer (for example position information)
 #' 
 #' @details k-mers \code{hashmap} contains key-value pairs: key is an \code{integer} representing a hash of k-mer,
-#' whereas the value represents a pair: (k-mer \code{string} for presentation, number of k-mer occurences)
+#' whereas the value represents a pair: (k-mer \code{string} for presentation, number of k-mer occurrences)
 NULL
 
 #' @name add_kmer_if_not_exists
@@ -104,7 +104,7 @@ NULL
 
 #' @name count_kmers_helper
 #' @title Count k-mers
-#' @description Counts the occurences of k-mers
+#' @description Counts the occurrences of k-mers
 #' 
 #' @param s  \code{integer} vector representing encoded input sequence
 #' @param d  \code{integer} vector representing gaps in k-mer
@@ -113,7 +113,7 @@ NULL
 #' @param kmer_decorator \code{function} that can add extra characters in order to enhance the presentation of \code{string} k-mer
 #' @param pos  \code{logical} value representing whether to count positional k-mers
 #' 
-#' @return \code{hash map} whose key is a \code{string} presentation of k-mer and value is the number of its occurences
+#' @return \code{hash map} whose key is a \code{string} presentation of k-mer and value is the number of its occurrences
 NULL
 
 #' @name fill_items_coding_maps
@@ -121,7 +121,7 @@ NULL
 #' 
 #' @details Enumerates each sequence item in order to convert \code{non-integer} values to \code{integer} ones
 #' \code{B} is the template Rcpp input type
-#' \code{S} is the template cpp input type of one element
+#' \code{S} is the template c++ input type of one element
 #' @param elems  the input elements of a sequence
 #' @param val2num  the reference to \code{hash map} representing the encoding to \code{integer} value
 #' @param num2str the reference to \code{hash map} representing the (reversed to \code{val2num}) encoding to \code{string} value
@@ -132,10 +132,10 @@ NULL
 #' @name fill_encoded_int_vector
 #' @title Encode sequence vector (replace items to numbers)
 #' 
-#' @details \code{SEQ_TYPE} - the type of a sequence of the input sequence (rcpp)
+#' @details \code{SEQ_TYPE} - the type of a sequence of the input sequence (Rcpp)
 #' \code{ELEM_TYPE} - the type of an item of the input sequence (c++)
 #' 
-#' @param str_v  the input (rcpp) sequence
+#' @param str_v  the input (Rcpp) sequence
 #' @param res  the result (encoded) vector
 #' @param val2int  the encoder
 NULL
@@ -143,8 +143,8 @@ NULL
 #' @name get_kmers
 #' @title Get k-mers
 #' 
-#' @description Counts the occurences of k-mers
-#' \code{B} - the (rcpp) type of an input sequence
+#' @description Counts the occurrences of k-mers
+#' \code{B} - the (Rcpp) type of an input sequence
 #' \code{S} - the (c++) type of an item of the sequence
 #' 
 #' @param s  input sequence
@@ -152,7 +152,7 @@ NULL
 #' @param alphabet  Rcpp sequence representing alphabet
 #' @param val2str_converter  \code{function} representing the conversion to string representation of an item
 #' @param kmer_decorator  \code{function} that can add extra characters in order to enhance the presentation of k-mer.
-#' @return \code{hash map} containing string representations of k-mers with their occurrence countings 
+#' @return \code{hash map} containing string representations of k-mers with their occurrence counts 
 NULL
 
 #' @name get_window_length
@@ -199,7 +199,7 @@ get_hash_for_word <- function(kmer) {
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
 #' @param alphabet a \code{string} vector representing valid elements of k-mer
 #' @param pos a \code{logical} value that denotes whether positional k-mers should be generated
-#' @return a named vector with countings of k-mers
+#' @return a named vector with counts of k-mers
 #' 
 #' @details K-mers that contain elements from \code{alphabet} but do not exist in the input sequence are also generated.
 #' 
@@ -221,7 +221,7 @@ count_kmers_str <- function(s, d, alphabet, pos) {
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
 #' @param alphabet a \code{numeric} vector representing valid elements of k-mer
 #' @param pos a \code{logical} value that denotes whether positional k-mers should be generated
-#' @return a named vector with countings of k-mers
+#' @return a named vector with counts of k-mers
 #' 
 #' @details K-mers that contain elements from \code{alphabet} but do not exist in the input sequence are also generated.
 #' 

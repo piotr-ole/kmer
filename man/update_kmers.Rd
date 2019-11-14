@@ -23,5 +23,5 @@ Update k-mers in a \code{hash map}
 }
 \details{
 k-mers \code{hashmap} contains key-value pairs: key is an \code{integer} representing a hash of k-mer,
-whereas the value represents a pair: (k-mer \code{string} for presentation, number of k-mer occurences)
+whereas the value represents a pair: (k-mer \code{string} for presentation, number of k-mer occurrences)
 }

@@ -15,10 +15,10 @@
 \item{kmer_decorator}{\code{function} that can add extra characters in order to enhance the presentation of k-mer.}
 }
 \value{
-\code{hash map} containing string representations of k-mers with their occurrence countings
+\code{hash map} containing string representations of k-mers with their occurrence counts
 }
 \description{
-Counts the occurences of k-mers
-\code{B} - the (rcpp) type of an input sequence
+Counts the occurrences of k-mers
+\code{B} - the (Rcpp) type of an input sequence
 \code{S} - the (c++) type of an item of the sequence
 }

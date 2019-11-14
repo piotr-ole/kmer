@@ -16,7 +16,7 @@ count_kmers_str(s, d, alphabet, pos)
 \item{pos}{a \code{logical} value that denotes whether positional k-mers should be generated}
 }
 \value{
-a named vector with countings of k-mers
+a named vector with counts of k-mers
 }
 \description{
 Count k-mers for string sequences

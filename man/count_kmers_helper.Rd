@@ -17,8 +17,8 @@
 \item{pos}{\code{logical} value representing whether to count positional k-mers}
 }
 \value{
-\code{hash map} whose key is a \code{string} presentation of k-mer and value is the number of its occurences
+\code{hash map} whose key is a \code{string} presentation of k-mer and value is the number of its occurrences
 }
 \description{
-Counts the occurences of k-mers
+Counts the occurrences of k-mers
 }
