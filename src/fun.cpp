@@ -9,7 +9,7 @@
 #include<iostream>
 #include<algorithm>
 #include<functional>
-
+#include<mutex>
 
 
 // a helper typedef used for adding presentation details for k-mer
@@ -487,17 +487,26 @@ struct MapReduceWorker: public RcppParallel::Worker {
   
   std::function<std::unordered_map<std::string, int>(int)> proc;
   
+  std::mutex mr_mutex;
+  
   MapReduceWorker(std::unordered_map<std::string, int> output,
             std::function<std::unordered_map<std::string, int>(int)> proc)
     : output(output), proc(proc) {
   }
   
   void operator()(std::size_t begin, std::size_t end) {
+    std::unordered_map<std::string, int> tmp_res;
     for(int r_ind = begin; r_ind < end; ++r_ind) {
       for(auto& pair: proc(r_ind)) {
-        output[pair.first] += pair.second;
+        tmp_res[pair.first] += pair.second;
       }
     }
+    
+    mr_mutex.lock();
+    for(auto& pair: tmp_res) {
+      output[pair.first] += pair.second; 
+    }
+    mr_mutex.unlock();
   }
 };
 
