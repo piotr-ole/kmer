@@ -83,6 +83,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// count_unigrams
+std::unordered_map<std::string, int> count_unigrams(Rcpp::StringMatrix& m, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
+RcppExport SEXP _kmer_count_unigrams(SEXP mSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringMatrix& >::type m(mSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector& >::type alphabet(alphabetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector& >::type pos(posSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_unigrams(m, alphabet, pos));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kmer_get_window_length", (DL_FUNC) &_kmer_get_window_length, 1},
@@ -91,6 +104,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kmer_count_kmers_str", (DL_FUNC) &_kmer_count_kmers_str, 4},
     {"_kmer_count_kmer_num", (DL_FUNC) &_kmer_count_kmer_num, 4},
     {"_kmer_count_kmers_larger_than_one", (DL_FUNC) &_kmer_count_kmers_larger_than_one, 4},
+    {"_kmer_count_unigrams", (DL_FUNC) &_kmer_count_unigrams, 3},
     {NULL, NULL, 0}
 };
 

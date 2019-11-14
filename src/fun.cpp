@@ -481,13 +481,13 @@ std::unordered_map<std::string, int> count_kmer_num(Rcpp::NumericVector& s,
                                          positional);
 }
 
-struct MapWorker: public RcppParallel::Worker {
+struct MapReduceWorker: public RcppParallel::Worker {
   
   std::unordered_map<std::string, int> output;
   
   std::function<std::unordered_map<std::string, int>(int)> proc;
   
-  MapWorker(std::unordered_map<std::string, int> output,
+  MapReduceWorker(std::unordered_map<std::string, int> output,
             std::function<std::unordered_map<std::string, int>(int)> proc)
     : output(output), proc(proc) {
   }
@@ -528,10 +528,56 @@ std::unordered_map<std::string, int> count_kmers_larger_than_one(Rcpp::StringMat
   };
   
   std::unordered_map<std::string, int> res;
-  MapWorker mapWorker(res, proc);
-  RcppParallel::parallelFor(0, m.rows(), mapWorker);
+  MapReduceWorker worker(res, proc);
+  RcppParallel::parallelFor(0, m.rows(), worker);
   
-  return mapWorker.output;
+  return worker.output;
+}
+
+//' @name count_unigrams
+//' @title Count unigrams
+//' @param m  \code{string} matrix that contains one sequence in each row
+//' @param alphabet  \code{string} vector that contains valid elements to construct unigrams
+//' @param pos  \code{logical} vector denoting whether to count positional k-mers
+//' @return named \code{integer} vector with unigrams' counts 
+//' @export
+// [[Rcpp::export]]
+std::unordered_map<std::string, int> count_unigrams(Rcpp::StringMatrix& m,
+                                                    Rcpp::StringVector& alphabet,
+                                                    Rcpp::LogicalVector& pos) {
+  std::unordered_map<std::string, int> is_allowed;
+  for(auto& a: alphabet) {
+    is_allowed[static_cast<std::string>(a)] = true;
+  }
+  
+  bool is_positional = is_first_true(pos);
+  KMER_DECORATOR decorator = get_kmer_decorator(is_positional);
+  
+  std::function<std::unordered_map<std::string, int>(int)> proc = [&decorator, &m, &is_allowed](int row_index) {
+    std::unordered_map<std::string, int> kmers;
+    Rcpp::StringMatrix::Row row = m(row_index, Rcpp::_);
+    for(int c=0; c < row.size(); ++c) {
+      std::string str = static_cast<std::string>(row[c]);
+      if(is_allowed[str]) {
+        kmers[decorator(str, c)]++;
+      }
+    }
+    return kmers;
+  };
+  
+  std::unordered_map<std::string, int> res;
+  MapReduceWorker worker(res, proc);
+  RcppParallel::parallelFor(0, m.nrow(), worker);
+  
+  if(!is_positional) {
+    for(auto& a: alphabet) {
+      std::string str = static_cast<std::string>(a);
+      if(worker.output.find(str) == worker.output.end()) {
+        worker.output[str] = 0;
+      }
+    }
+  }
+  return worker.output;
 }
 
 

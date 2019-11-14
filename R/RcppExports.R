@@ -255,3 +255,14 @@ count_kmers_larger_than_one <- function(m, d, alphabet, pos) {
     .Call('_kmer_count_kmers_larger_than_one', PACKAGE = 'kmer', m, d, alphabet, pos)
 }
 
+#' @name count_unigrams
+#' @title Count unigrams
+#' @param m  \code{string} matrix that contains one sequence in each row
+#' @param alphabet  \code{string} vector that contains valid elements to construct unigrams
+#' @param pos  \code{logical} vector denoting whether to count positional k-mers
+#' @return named \code{integer} vector with unigrams' counts 
+#' @export
+count_unigrams <- function(m, alphabet, pos) {
+    .Call('_kmer_count_unigrams', PACKAGE = 'kmer', m, alphabet, pos)
+}
+
