@@ -9,9 +9,9 @@ Description: kmer is a package providing fast counting of k-mers in sequences. I
   lengths of the k-mers and gaps between amino acids in the sequence. It's written with Rcpp to provide fast code
   execution.
 License: MIT + file LICENSE
-Imports: Rcpp (>= 1.0.2)
-LinkingTo: Rcpp
-SystemRequirements: C++11
+Imports: Rcpp (>= 1.0.2), RcppParallel
+LinkingTo: Rcpp, RcppParallel
+SystemRequirements: C++11, GNU make
 RoxygenNote: 7.0.0
 Encoding: UTF-8
 Suggests:

@@ -103,8 +103,8 @@ NULL
 NULL
 
 #' @name count_kmers_helper
-#' @title Count k-mers
-#' @description Counts the occurrences of k-mers
+#' @title Count k-mers 
+#' @description Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 #' 
 #' @param s  \code{integer} vector representing encoded input sequence
 #' @param d  \code{integer} vector representing gaps in k-mer
@@ -143,7 +143,7 @@ NULL
 #' @name get_kmers
 #' @title Get k-mers
 #' 
-#' @description Counts the occurrences of k-mers
+#' @description Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 #' \code{B} - the (Rcpp) type of an input sequence
 #' \code{S} - the (c++) type of an item of the sequence
 #' 
@@ -193,7 +193,7 @@ get_hash_for_word <- function(kmer) {
 }
 
 #' @name count_kmers_str
-#' @title Count k-mers for string sequences
+#' @title Count k-mers for string sequences (the size of k-mer should be larger than one)
 #' 
 #' @param s  a \code{string} vector representing an input sequence
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
@@ -215,7 +215,8 @@ count_kmers_str <- function(s, d, alphabet, pos) {
 }
 
 #' @name count_kmer_num
-#' @title Count k-mers for numeric sequences
+#' @title Count k-mers for numeric sequences (the size of k-mer should be larger than one)
+#' 
 #' 
 #' @param s  a \code{numeric} vector representing an input sequence
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
@@ -233,5 +234,35 @@ count_kmers_str <- function(s, d, alphabet, pos) {
 #' @export
 count_kmer_num <- function(s, d, alphabet, pos) {
     .Call('_kmer_count_kmer_num', PACKAGE = 'kmer', s, d, alphabet, pos)
+}
+
+#' @name count_kmers_larger_than_one
+#' @title Count k-mers that containes more than one item
+#' 
+#' @param m  \code{character} matrix - each row represents one sequence
+#' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
+#' @param alphabet a \code{numeric} vector representing valid elements of k-mer
+#' @param pos a \code{logical} value that denotes whether positional k-mers should be generated
+#' @return a named vector with counts of k-mers
+#' @example count_kmers_larger_than_one(
+#' matrix(data=c("a", "b", "c", "b", "c", "a"), nrow=2),
+#' c(0),
+#' c("a", "b", "c"),
+#' FALSE)
+#' @importFrom  RcppParallel RcppParallelLibs
+#' @export
+count_kmers_larger_than_one <- function(m, d, alphabet, pos) {
+    .Call('_kmer_count_kmers_larger_than_one', PACKAGE = 'kmer', m, d, alphabet, pos)
+}
+
+#' @name count_unigrams
+#' @title Count unigrams
+#' @param m  \code{string} matrix that contains one sequence in each row
+#' @param alphabet  \code{string} vector that contains valid elements to construct unigrams
+#' @param pos  \code{logical} vector denoting whether to count positional k-mers
+#' @return named \code{integer} vector with unigrams' counts 
+#' @export
+count_unigrams <- function(m, alphabet, pos) {
+    .Call('_kmer_count_unigrams', PACKAGE = 'kmer', m, alphabet, pos)
 }
 

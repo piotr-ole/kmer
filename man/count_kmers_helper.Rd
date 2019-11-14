@@ -20,5 +20,5 @@
 \code{hash map} whose key is a \code{string} presentation of k-mer and value is the number of its occurrences
 }
 \description{
-Counts the occurrences of k-mers
+Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 }

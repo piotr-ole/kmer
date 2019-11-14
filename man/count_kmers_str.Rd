@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{count_kmers_str}
 \alias{count_kmers_str}
-\title{Count k-mers for string sequences}
+\title{Count k-mers for string sequences (the size of k-mer should be larger than one)}
 \usage{
 count_kmers_str(s, d, alphabet, pos)
 }
@@ -19,7 +19,7 @@ count_kmers_str(s, d, alphabet, pos)
 a named vector with counts of k-mers
 }
 \description{
-Count k-mers for string sequences
+Count k-mers for string sequences (the size of k-mer should be larger than one)
 }
 \details{
 K-mers that contain elements from \code{alphabet} but do not exist in the input sequence are also generated.

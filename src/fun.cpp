@@ -1,5 +1,7 @@
-// [[Rcpp::plugins("cpp11")]]
 
+// [[Rcpp::depends(RcppParallel)]]
+#include <RcppParallel.h>
+// [[Rcpp::plugins("cpp11")]]
 #include<Rcpp.h>
 #include<string>
 #include<unordered_map>
@@ -7,6 +9,8 @@
 #include<iostream>
 #include<algorithm>
 #include<functional>
+#include<mutex>
+
 
 // a helper typedef used for adding presentation details for k-mer
 // the first parameter denotes input k-mer string
@@ -277,8 +281,8 @@ bool is_kmer_allowed(const std::vector<int>& s,
 }
 
 //' @name count_kmers_helper
-//' @title Count k-mers
-//' @description Counts the occurrences of k-mers
+//' @title Count k-mers 
+//' @description Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 //' 
 //' @param s  \code{integer} vector representing encoded input sequence
 //' @param d  \code{integer} vector representing gaps in k-mer
@@ -372,7 +376,7 @@ void fill_encoded_int_vector(SEQ_TYPE str_v,
 //' @name get_kmers
 //' @title Get k-mers
 //' 
-//' @description Counts the occurrences of k-mers
+//' @description Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 //' \code{B} - the (Rcpp) type of an input sequence
 //' \code{S} - the (c++) type of an item of the sequence
 //' 
@@ -418,7 +422,7 @@ bool is_first_true(Rcpp::LogicalVector& v) {
 }
 
 //' @name count_kmers_str
-//' @title Count k-mers for string sequences
+//' @title Count k-mers for string sequences (the size of k-mer should be larger than one)
 //' 
 //' @param s  a \code{string} vector representing an input sequence
 //' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
@@ -448,7 +452,8 @@ std::unordered_map<std::string, int> count_kmers_str(Rcpp::StringVector& s,
 }
 
 //' @name count_kmer_num
-//' @title Count k-mers for numeric sequences
+//' @title Count k-mers for numeric sequences (the size of k-mer should be larger than one)
+//' 
 //' 
 //' @param s  a \code{numeric} vector representing an input sequence
 //' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
@@ -475,3 +480,113 @@ std::unordered_map<std::string, int> count_kmer_num(Rcpp::NumericVector& s,
                                          get_kmer_decorator(positional),
                                          positional);
 }
+
+struct MapReduceWorker: public RcppParallel::Worker {
+  
+  std::unordered_map<std::string, int> output;
+  
+  std::function<std::unordered_map<std::string, int>(int)> proc;
+  
+  std::mutex mr_mutex;
+  
+  MapReduceWorker(std::unordered_map<std::string, int> output,
+            std::function<std::unordered_map<std::string, int>(int)> proc)
+    : output(output), proc(proc) {
+  }
+  
+  void operator()(std::size_t begin, std::size_t end) {
+    std::unordered_map<std::string, int> tmp_res;
+    for(int r_ind = begin; r_ind < end; ++r_ind) {
+      for(auto& pair: proc(r_ind)) {
+        tmp_res[pair.first] += pair.second;
+      }
+    }
+    
+    mr_mutex.lock();
+    for(auto& pair: tmp_res) {
+      output[pair.first] += pair.second; 
+    }
+    mr_mutex.unlock();
+  }
+};
+
+
+//' @name count_kmers_larger_than_one
+//' @title Count k-mers that containes more than one item
+//' 
+//' @param m  \code{character} matrix - each row represents one sequence
+//' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
+//' @param alphabet a \code{numeric} vector representing valid elements of k-mer
+//' @param pos a \code{logical} value that denotes whether positional k-mers should be generated
+//' @return a named vector with counts of k-mers
+//' @example count_kmers_larger_than_one(
+//' matrix(data=c("a", "b", "c", "b", "c", "a"), nrow=2),
+//' c(0),
+//' c("a", "b", "c"),
+//' FALSE)
+//' @importFrom  RcppParallel RcppParallelLibs
+//' @export
+// [[Rcpp::export]]
+std::unordered_map<std::string, int> count_kmers_larger_than_one(Rcpp::StringMatrix& m,
+                                                 Rcpp::IntegerVector& d,
+                                                 Rcpp::StringVector& alphabet,
+                                                 Rcpp::LogicalVector& pos) {
+  std::function<std::unordered_map<std::string, int>(int)> proc = [&m, &d, &alphabet, &pos](int r_ind) {
+    Rcpp::StringVector v = m(r_ind, Rcpp::_);
+    return count_kmers_str(v, d, alphabet, pos);
+  };
+  
+  std::unordered_map<std::string, int> res;
+  MapReduceWorker worker(res, proc);
+  RcppParallel::parallelFor(0, m.rows(), worker);
+  
+  return worker.output;
+}
+
+//' @name count_unigrams
+//' @title Count unigrams
+//' @param m  \code{string} matrix that contains one sequence in each row
+//' @param alphabet  \code{string} vector that contains valid elements to construct unigrams
+//' @param pos  \code{logical} vector denoting whether to count positional k-mers
+//' @return named \code{integer} vector with unigrams' counts 
+//' @export
+// [[Rcpp::export]]
+std::unordered_map<std::string, int> count_unigrams(Rcpp::StringMatrix& m,
+                                                    Rcpp::StringVector& alphabet,
+                                                    Rcpp::LogicalVector& pos) {
+  std::unordered_map<std::string, int> is_allowed;
+  for(auto& a: alphabet) {
+    is_allowed[static_cast<std::string>(a)] = true;
+  }
+  
+  bool is_positional = is_first_true(pos);
+  KMER_DECORATOR decorator = get_kmer_decorator(is_positional);
+  
+  std::function<std::unordered_map<std::string, int>(int)> proc = [&decorator, &m, &is_allowed](int row_index) {
+    std::unordered_map<std::string, int> kmers;
+    Rcpp::StringMatrix::Row row = m(row_index, Rcpp::_);
+    for(int c=0; c < row.size(); ++c) {
+      std::string str = static_cast<std::string>(row[c]);
+      if(is_allowed[str]) {
+        kmers[decorator(str, c)]++;
+      }
+    }
+    return kmers;
+  };
+  
+  std::unordered_map<std::string, int> res;
+  MapReduceWorker worker(res, proc);
+  RcppParallel::parallelFor(0, m.nrow(), worker);
+  
+  if(!is_positional) {
+    for(auto& a: alphabet) {
+      std::string str = static_cast<std::string>(a);
+      if(worker.output.find(str) == worker.output.end()) {
+        worker.output[str] = 0;
+      }
+    }
+  }
+  return worker.output;
+}
+
+
