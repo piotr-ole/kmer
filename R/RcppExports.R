@@ -235,8 +235,22 @@ count_kmer_num <- function(s, d, alphabet, pos) {
     .Call('_kmer_count_kmer_num', PACKAGE = 'kmer', s, d, alphabet, pos)
 }
 
+#' @name count_kmers_larger_than_one
+#' @title Count k-mers larger than one
+#' 
+#' @param m  \code{character} matrix - each row represents one sequence
+#' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
+#' @param alphabet a \code{numeric} vector representing valid elements of k-mer
+#' @param pos a \code{logical} value that denotes whether positional k-mers should be generated
+#' @return a named vector with counts of k-mers
+#' @example count_kmers_larger_than_one(
+#' matrix(data=c("a", "b", "c", "b", "c", "a"), nrow=2),
+#' c(0),
+#' c("a", "b", "c"),
+#' FALSE)
 #' @importFrom  RcppParallel RcppParallelLibs
-count_kmerss <- function(m, d, alphabet, pos) {
-    .Call('_kmer_count_kmerss', PACKAGE = 'kmer', m, d, alphabet, pos)
+#' @export
+count_kmers_larger_than_one <- function(m, d, alphabet, pos) {
+    .Call('_kmer_count_kmers_larger_than_one', PACKAGE = 'kmer', m, d, alphabet, pos)
 }
 

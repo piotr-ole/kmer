@@ -69,9 +69,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// count_kmerss
-std::unordered_map<std::string, int> count_kmerss(Rcpp::StringMatrix& m, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
-RcppExport SEXP _kmer_count_kmerss(SEXP mSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
+// count_kmers_larger_than_one
+std::unordered_map<std::string, int> count_kmers_larger_than_one(Rcpp::StringMatrix& m, Rcpp::IntegerVector& d, Rcpp::StringVector& alphabet, Rcpp::LogicalVector& pos);
+RcppExport SEXP _kmer_count_kmers_larger_than_one(SEXP mSEXP, SEXP dSEXP, SEXP alphabetSEXP, SEXP posSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,7 +79,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type d(dSEXP);
     Rcpp::traits::input_parameter< Rcpp::StringVector& >::type alphabet(alphabetSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector& >::type pos(posSEXP);
-    rcpp_result_gen = Rcpp::wrap(count_kmerss(m, d, alphabet, pos));
+    rcpp_result_gen = Rcpp::wrap(count_kmers_larger_than_one(m, d, alphabet, pos));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -90,7 +90,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kmer_get_hash_for_word", (DL_FUNC) &_kmer_get_hash_for_word, 1},
     {"_kmer_count_kmers_str", (DL_FUNC) &_kmer_count_kmers_str, 4},
     {"_kmer_count_kmer_num", (DL_FUNC) &_kmer_count_kmer_num, 4},
-    {"_kmer_count_kmerss", (DL_FUNC) &_kmer_count_kmerss, 4},
+    {"_kmer_count_kmers_larger_than_one", (DL_FUNC) &_kmer_count_kmers_larger_than_one, 4},
     {NULL, NULL, 0}
 };
 

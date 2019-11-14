@@ -498,12 +498,26 @@ struct MapWorker: public RcppParallel::Worker {
       }
     }
   }
-};// [[Rcpp::export]]
+};
 
 
+//' @name count_kmers_larger_than_one
+//' @title Count k-mers larger than one
+//' 
+//' @param m  \code{character} matrix - each row represents one sequence
+//' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
+//' @param alphabet a \code{numeric} vector representing valid elements of k-mer
+//' @param pos a \code{logical} value that denotes whether positional k-mers should be generated
+//' @return a named vector with counts of k-mers
+//' @example count_kmers_larger_than_one(
+//' matrix(data=c("a", "b", "c", "b", "c", "a"), nrow=2),
+//' c(0),
+//' c("a", "b", "c"),
+//' FALSE)
 //' @importFrom  RcppParallel RcppParallelLibs
+//' @export
 // [[Rcpp::export]]
-std::unordered_map<std::string, int> count_kmerss(Rcpp::StringMatrix& m,
+std::unordered_map<std::string, int> count_kmers_larger_than_one(Rcpp::StringMatrix& m,
                                                  Rcpp::IntegerVector& d,
                                                  Rcpp::StringVector& alphabet,
                                                  Rcpp::LogicalVector& pos) {
