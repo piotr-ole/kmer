@@ -1,5 +1,7 @@
-// [[Rcpp::plugins("cpp11")]]
 
+// [[Rcpp::depends(RcppParallel)]]
+#include <RcppParallel.h>
+// [[Rcpp::plugins("cpp11")]]
 #include<Rcpp.h>
 #include<string>
 #include<unordered_map>
@@ -475,3 +477,42 @@ std::unordered_map<std::string, int> count_kmer_num(Rcpp::NumericVector& s,
                                          get_kmer_decorator(positional),
                                          positional);
 }
+
+struct MapWorker: public RcppParallel::Worker {
+  
+  std::unordered_map<std::string, int> output;
+  
+  std::function<std::unordered_map<std::string, int>(int)> proc;
+  
+  MapWorker(std::unordered_map<std::string, int> output,
+            std::function<std::unordered_map<std::string, int>(int)> proc)
+    : output(output), proc(proc) {
+  }
+  
+  void operator()(std::size_t begin, std::size_t end) {
+    for(int r_ind = begin; r_ind < end; ++r_ind) {
+      for(auto& pair: proc(r_ind)) {
+        output[pair.first] += pair.second;
+      }
+    }
+  }
+};
+
+// [[Rcpp::export]]
+std::unordered_map<std::string, int> count_kmerss(Rcpp::StringMatrix& m,
+                                                 Rcpp::IntegerVector& d,
+                                                 Rcpp::StringVector& alphabet,
+                                                 Rcpp::LogicalVector& pos) {
+  std::function<std::unordered_map<std::string, int>(int)> proc = [&m, &d, &alphabet, &pos](int r_ind) {
+    Rcpp::StringVector v = m(r_ind, Rcpp::_);
+    return count_kmers_str(v, d, alphabet, pos);
+  };
+  
+  std::unordered_map<std::string, int> res;
+  MapWorker mapWorker(res, proc);
+  RcppParallel::parallelFor(0, m.rows(), mapWorker);
+  
+  return mapWorker.output;
+}
+
+
