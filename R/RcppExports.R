@@ -235,3 +235,8 @@ count_kmer_num <- function(s, d, alphabet, pos) {
     .Call('_kmer_count_kmer_num', PACKAGE = 'kmer', s, d, alphabet, pos)
 }
 
+#' @importFrom  RcppParallel RcppParallelLibs
+count_kmerss <- function(m, d, alphabet, pos) {
+    .Call('_kmer_count_kmerss', PACKAGE = 'kmer', m, d, alphabet, pos)
+}
+

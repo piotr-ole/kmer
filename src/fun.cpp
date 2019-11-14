@@ -10,6 +10,8 @@
 #include<algorithm>
 #include<functional>
 
+
+
 // a helper typedef used for adding presentation details for k-mer
 // the first parameter denotes input k-mer string
 // the second parameter denotes the position of k-mer in the given sequence
@@ -496,8 +498,10 @@ struct MapWorker: public RcppParallel::Worker {
       }
     }
   }
-};
+};// [[Rcpp::export]]
 
+
+//' @importFrom  RcppParallel RcppParallelLibs
 // [[Rcpp::export]]
 std::unordered_map<std::string, int> count_kmerss(Rcpp::StringMatrix& m,
                                                  Rcpp::IntegerVector& d,
