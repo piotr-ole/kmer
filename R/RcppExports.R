@@ -103,8 +103,8 @@ NULL
 NULL
 
 #' @name count_kmers_helper
-#' @title Count k-mers
-#' @description Counts the occurrences of k-mers
+#' @title Count k-mers 
+#' @description Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 #' 
 #' @param s  \code{integer} vector representing encoded input sequence
 #' @param d  \code{integer} vector representing gaps in k-mer
@@ -143,7 +143,7 @@ NULL
 #' @name get_kmers
 #' @title Get k-mers
 #' 
-#' @description Counts the occurrences of k-mers
+#' @description Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 #' \code{B} - the (Rcpp) type of an input sequence
 #' \code{S} - the (c++) type of an item of the sequence
 #' 
@@ -193,7 +193,7 @@ get_hash_for_word <- function(kmer) {
 }
 
 #' @name count_kmers_str
-#' @title Count k-mers for string sequences
+#' @title Count k-mers for string sequences (the size of k-mer should be larger than one)
 #' 
 #' @param s  a \code{string} vector representing an input sequence
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
@@ -215,7 +215,8 @@ count_kmers_str <- function(s, d, alphabet, pos) {
 }
 
 #' @name count_kmer_num
-#' @title Count k-mers for numeric sequences
+#' @title Count k-mers for numeric sequences (the size of k-mer should be larger than one)
+#' 
 #' 
 #' @param s  a \code{numeric} vector representing an input sequence
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer
@@ -236,7 +237,7 @@ count_kmer_num <- function(s, d, alphabet, pos) {
 }
 
 #' @name count_kmers_larger_than_one
-#' @title Count k-mers larger than one
+#' @title Count k-mers that containes more than one item
 #' 
 #' @param m  \code{character} matrix - each row represents one sequence
 #' @param d  an \code{integer} vector representing gaps between consecutive elements of k-mer

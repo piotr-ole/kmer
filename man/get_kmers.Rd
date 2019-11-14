@@ -18,7 +18,7 @@
 \code{hash map} containing string representations of k-mers with their occurrence counts
 }
 \description{
-Counts the occurrences of k-mers
+Counts the occurrences of k-mers (the size of k-mer should be larger than one)
 \code{B} - the (Rcpp) type of an input sequence
 \code{S} - the (c++) type of an item of the sequence
 }
